@@ -1,0 +1,105 @@
+
+/* Regression "analysis"*/
+
+PROC Logistic DATA = py.logit_boot descending outest = py.cal_function covout;
+	by month_fixed ;
+	model revenue_n = score2
+		/lackfit rsquare
+		selection = stepwise
+		slentry = 0.9
+		slstay = 0.1
+		outroc=bui;
+	output out=scored predicted=score;
+RUN;
+
+DATA py.cal_function (keep = RI_INTERCEPT RI_SLOPE month_fixed intercept score2 business_segment period slope model);
+	set py.cal_function;
+	rename score2 = slope;
+/* 	RI_INTERCEPT = (intercept + 7.16)/0.0173; */
+/* 	RI_SLOPE = slope/0.0173; */
+RUN;
+
+/* F(x,t) */
+/* H=1/2*log((1-fx)/fx); */
+/* f(x)=1/1+exp(-x) */
+/* f(x)^=fx(1-fx); */
+/* fx+fx^/2 ; */
+
+data scored;
+set scored;
+score=score2+score;
+run;
+
+
+PROC Freq DATA=scored;
+	;
+	BY MONTH_FIXED;
+	tables revenue_N*score/ measures alpha=0.1 ;
+/* 		OUT=PY.TEST_SC; */
+/* 	tables P_1 / measures alpha=0.1 outcum outpct out=PY.TEST_SCp1; */
+	Test SMDCR;
+	ods output SomersDCR=SomersD_Mod;
+RUN;
+
+data test_hyp;
+	if _n_=0 then
+		set py.SomersD_Mod_test  ;
+	dcl hash h(dataset :"scored", ordered : "A");
+	h.definekey("MONTH_FIXED");
+	h.definedata("p_1", "MONTH_FIXED", "REVENUE_N");
+	h.definedone();
+	;
+/* 	call missing(of _all_); */
+	;
+
+	do _n_=1 by 1 until (eof);
+		set py.SomersD_Mod_test NOBS=N End=eof;
+
+		BY MONTH_FIXEd;
+		ARRAY S[0:12]s0-s12;
+		array f_x[0:12] fx0-fx12;
+		ARRAY F_X2[0:12] fx2_0-fx2_12;
+		ARRAY Y [0:12] Y_0-Y_12;
+		ARRAY F_3[0:12]F3_0-F3_12;
+		ARRAY F_x3[0:12]FX3_0-FX3_12;
+
+	DO	z=0 TO M;
+		
+		rc=h.find();
+		;
+		T=MONTH_FIXED;
+/* 		x=p_1; */
+		F_x[Z]=p_1;
+		;
+		P=1-gini;
+		Y[T]=2*LOG(DIVIDE(Y[t-1], Y[T-1]**(0.5*T)));
+		F_X2[Z]=f_x[z]*((f_x[z]- P));
+		F_3[z]=f_x[z]*(f_x[z]-P)+(f_x[z]*LAG((f_x[z]-P))-0.25*divide(P, f_x[z]));
+		F_X3[Z]=f_x[z]+divide(f_x2[z], 2);
+
+		/* 		->TAYLOR  */
+		S[T]=CATS('<', 'Y[T-1]', '|','F_X3[T]' , '|', 'Y[T+1]', '>');
+	OUTPUT;END;
+	
+	end;
+
+	/* end; */
+run;
+
+
+DATA py.SomersD_Mod;
+	set SomersD_Mod;
+	length name $50.;
+
+	/* nway\14 */
+	if Label1="Somers' D C|R" then
+		Label1="GINI";
+	Name="SCORE";
+RUN;
+
+DATA py.SomersD_cal;
+	set py.SomersD_Mod;
+	where Label1="GINI";
+	RENAME nValue1=GINI;
+	keep month_fixed name GINI nValue1;
+RUN;
