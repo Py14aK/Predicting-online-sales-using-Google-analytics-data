@@ -1,0 +1,645 @@
+
+
+data py.Online_store;
+	set work.import1;
+run;
+
+/* CLEAN DATA and encode variables*/;
+
+proc contents data=py.ONLINE_STORE out=Names(keep=name);
+run;
+
+proc sql; 
+	select name into :line_NAMES separated by "," from NAMES;
+quit;
+
+%put $line_names.;
+
+/* NEED TO CHANGE CHAR VARIABLES TO DATES AND CHECK FOR MISSINGS */;
+;
+
+PROC Format;
+	value $missfmt " "="Missing" other="Not Missing";
+	value missfmt  .="Missing" other="Not Missing";
+RUN;
+
+;
+;
+data py.online_store_fixed;
+	DO _n_=1 BY 1 UNTIL(EOF);
+		set py.online_store END=EOF;
+
+		IF VisitorType="Returning_Visitor" THEN
+			v_TYPE_N=1;
+		ELSE IF VisitorType="New_Visitor" then
+			v_type_n=0;
+
+		IF Month="Aug" then
+			Month_FIXED=10;
+		ELSE IF Month="Dec" then
+			Month_FIXED=12;
+		ELSE IF Month="Feb" then
+			Month_FIXED=2;
+		ELSE IF Month="Jul" then
+			Month_FIXED=7;
+		ELSE IF Month="Jun" then
+			Month_FIXED=6;
+		ELSE IF Month="Jan" then
+			Month_FIXED=1;
+		ELSE IF Month="Mar" then
+			Month_FIXED=3;
+		ELSE IF Month="Apr" then
+			Month_FIXED=4;
+		ELSE IF Month="May" then
+			Month_FIXED=5;
+		ELSE IF Month="Nov" then
+			Month_FIXED=11;
+		ELSE IF Month="Oct" then
+			Month_FIXED=8;
+		ELSE IF Month="Sep" then
+			Month_FIXED=9;
+
+		IF WEEKEND="TRUE" THEN
+			WEEKEND_N=1;
+		ELSE IF WEEKEND="FALSE" THEN
+			WEEKEND_N=0;
+
+		IF REVENUE="TRUE" THEN
+			REVENUE_N=1;
+		ELSE IF REVENUE="FALSE" THEN
+			REVENUE_N=0;
+		;
+		output;
+		DROP REVENUE MONTH VisitorType WEEKEND;
+	END;
+RUN;
+
+/*  */
+/* SORT BY MONTH  */
+PROC SORT DATA=PY.ONLINE_STORE_fixed;
+	BY REVENUE_N;
+RUN;
+
+
+PROC FREQ DATA=PY.online_store_fixed;
+/* by month_fixed; */
+/* 	tables _CHAR_ / measures missing plots=all  alpha=0.1 OUT=CHAR; */
+/* 	format _CHAR_ $missfmt.; */
+	tables _numeric_ / measures nocum nofreq missing nocol plots=all alpha=0.1 OUT=nUMERIC;
+/* 	format _numeric_ missfmt.; */
+	;
+RUN;
+
+
+/* NO MISSING DATA, WAITING ON EMAIL FROM MGM ON THE DIF BETWEEN NAME_DURATION AND NAME  */;
+
+proc sql;
+	select distinct Month into :Month separated by " " from py.online_store;
+quit;
+
+
+proc univariate data=PY.ONLINE_STORE_fixed  ;
+	/* 	BY REVENUE_N; */
+	VAR revenue_N _numeric_;
+	CLASS REVENUE_N;
+	HISTOGRAM  ;
+	
+	inset  normal(mu sigma);
+run;
+
+PROC SORT DATA=PY.ONLINE_STORE_FIXED;
+	BY MONTH_FIXED revenue_N;
+RUN;
+
+/* ;TRAIN/TEST */;
+;
+
+DATA PY.ONLINE_STORE_T py.online_store_test;
+	DO _N_=1 by 1;
+		SET PY.ONLINE_STORE_FIXED;
+		RAND=RAND('uniform', 11, 0);
+		test=mod(rand, 11);
+
+		if test <=8 then
+			output PY.ONLINE_STORE_T;
+		else if test >=8 then
+			output PY.ONLINE_STORE_Test;
+		DROP TEST RAND;
+	end;
+run;
+
+DATA ddl;
+	do _N_=1 by 1 until(eof);
+		set names end=eof;
+	
+		sent=cat('DATA PY.MONTLY_STATS_', NAME,';', 'set py.online_t;', 
+			'keep  month_fixed ', NAME, ';', 'run;');
+		Output;
+	end;
+run;
+
+;
+;
+
+PROC MEANS DATA=PY.online_store_T P10 p50 p25 P75 STD MAX n MODE NOPRINT nway 
+		VAR STDERR Q1 Q3 stddev MEAN;
+	CLASS REVENUE_n;
+
+	/* 	BY MONTH_FIXED; */
+	VAR _NUMERIC_;
+	output OUT=SUM;
+run;
+
+/* COMPARE */
+proc sort data=work.sum;
+	by _STAT_;
+RUN;
+
+ proc transpose data=sum OUT=SUM2;
+by _stat_;
+run;
+
+proc sort data=work.sum2;
+	by _STAT_ _NAME_;
+RUN;
+
+
+;
+/* SUM_N_P=SUM(COL1, CO2); */
+/* WOE=LOG(DIVIDE(DIVIDE(COL1, SUM_N_P)*100, DIVIDE(COL2, SUM_N_P)*100)); */
+/* IV=(DIVIDE(COL1, SUM_N_P)*100 - DIVIDE(COL2, SUM_N_P)*100)*WOE; */
+
+
+PROC HPBIN DATA=PY.ONLINE_STORE_T QUANTILE NUMBIN=20;
+	INPUT _NUMERIC_;
+	ODS OUTPUT MAPPING=PY.CATS;RUN;
+
+PROC HPBIN DATA=PY.store_cats WOE BINS_META=py.cats;
+	TARGET REVENUE_n/LEVEL=BINARY ORDER=DESC;
+	ODS OUTPUT INFOVALUE=IV WOE=PY.WOE_TABLE;
+RUN;
+
+/*  iv rules*/
+/* Less than 0.02 	Not useful for prediction */
+/* 0.02 to 0.1 	Weak predictive Power */
+/* 0.1 to 0.3 	Medium predictive Power */
+/* 0.3 to 0.5 	Strong predictive Power */
+/* >0.5 	Suspicious Predictive Power */;
+
+data PY.bins_if_WOE;
+	do _N_=1 by 1 until(eof);
+		set PY.WOE_TABLE end=eof;
+
+		/*  */if lb=. then
+			lb=0;
+
+		if_b=cat('IF ', VARIABLE, ' >= ', LB, ' AND ', VARIABLE, '< ', UB, ' THEN ', 
+			' WOE_', VARIABLE, '=', WOE, ';');
+		_NAME_=CATS('WOE_', VARIABLE);
+
+		/* 			'THEN$ CAT', _NAME_, '=', i, ';'); */;
+		output;
+	end;
+run;
+
+proc sql;
+	select distinct if_b into :if_b separated by "; " from py.bins_if_WOE;
+quit;
+
+DATA PY.ONLINE_STORE_T_W;
+	DO _n_=1 BY 1 UNTIL(EOF);
+		SET PY.ONLINE_STORE_T END=EOF;
+		array num _numeric_;
+
+		IF Administrative >= 0 AND Administrative < . THEN WOE_Administrative =0;
+IF Administrative >= 0 AND Administrative < 0.5 THEN WOE_Administrative =0.6388235755;
+IF Administrative >= 0.5 AND Administrative < 1.5 THEN WOE_Administrative =-0.382035853;
+IF Administrative >= 1.5 AND Administrative < 2.5 THEN WOE_Administrative =-0.225855315;
+IF Administrative >= 2.5 AND Administrative < 3.5 THEN WOE_Administrative =-0.245106074;
+IF Administrative >= 3.5 AND Administrative < 4.5 THEN WOE_Administrative =-0.348284643;
+IF Administrative >= 4.5 AND Administrative < 5.5 THEN WOE_Administrative =-0.286882155;
+IF Administrative >= 5.5 AND Administrative < 7.5 THEN WOE_Administrative =-0.476219255;
+IF Administrative >= 7.5 AND Administrative < 9.5 THEN WOE_Administrative =-0.734963923;
+IF Administrative >= 9.5 AND Administrative < . THEN WOE_Administrative =-0.650504218;
+IF Administrative_Duration >= 0 AND Administrative_Duration< . THEN WOE_Administrative_Duration=0;
+IF Administrative_Duration >= 0 AND Administrative_Duration< 0.6666666665 THEN WOE_Administrative_Duration=0.598702677;
+IF Administrative_Duration >= 0.6666666665 AND Administrative_Duration< 8.05 THEN WOE_Administrative_Duration=-0.012678904;
+IF Administrative_Duration >= 120.63333335 AND Administrative_Duration< 161.05384615 THEN WOE_Administrative_Duration=-0.235512905;
+IF Administrative_Duration >= 161.05384615 AND Administrative_Duration< 222.16666665 THEN WOE_Administrative_Duration=-0.486169585;
+IF Administrative_Duration >= 22.225 AND Administrative_Duration< 37.225 THEN WOE_Administrative_Duration=-0.43942141;
+IF Administrative_Duration >= 222.16666665 AND Administrative_Duration< 346.47982025 THEN WOE_Administrative_Duration=-0.545914429;
+IF Administrative_Duration >= 346.47982025 AND Administrative_Duration< . THEN WOE_Administrative_Duration=-0.667618029;
+IF Administrative_Duration >= 37.225 AND Administrative_Duration< 53.39047619 THEN WOE_Administrative_Duration=-0.517673607;
+IF Administrative_Duration >= 53.39047619 AND Administrative_Duration< 70.633333335 THEN WOE_Administrative_Duration=-0.281305933;
+IF Administrative_Duration >= 70.633333335 AND Administrative_Duration< 92.791666665 THEN WOE_Administrative_Duration=-0.319905572;
+IF Administrative_Duration >= 8.05 AND Administrative_Duration< 22.225 THEN WOE_Administrative_Duration=-0.187310804;
+IF Administrative_Duration >= 92.791666665 AND Administrative_Duration< 120.63333335 THEN WOE_Administrative_Duration=-0.306510558;
+IF BounceRates >= 0 AND BounceRates < . THEN WOE_BounceRates =0;
+IF BounceRates >= 0 AND BounceRates < 0.00001675 THEN WOE_BounceRates =-0.242015683;
+IF BounceRates >= 0.00001675 AND BounceRates < 0.0000394 THEN WOE_BounceRates =-0.066746125;
+IF BounceRates >= 0.0000394 AND BounceRates < 0.003034139 THEN WOE_BounceRates =-0.666839614;
+IF BounceRates >= 0.003034139 AND BounceRates < 0.005012563 THEN WOE_BounceRates =-0.422007641;
+IF BounceRates >= 0.005012563 AND BounceRates < 0.007134647 THEN WOE_BounceRates =-0.417229099;
+IF BounceRates >= 0.007134647 AND BounceRates < 0.009527221 THEN WOE_BounceRates =-0.2979004;
+IF BounceRates >= 0.009527221 AND BounceRates < 0.012731561 THEN WOE_BounceRates =0.0422441587;
+IF BounceRates >= 0.012731561 AND BounceRates < 0.0167006805 THEN WOE_BounceRates =0.2130098822;
+IF BounceRates >= 0.0167006805 AND BounceRates < 0.02269697 THEN WOE_BounceRates =0.641289668;
+IF BounceRates >= 0.02269697 AND BounceRates < 0.0335616435 THEN WOE_BounceRates =0.9221388288;
+IF BounceRates >= 0.0335616435 AND BounceRates < 0.055777778 THEN WOE_BounceRates =1.2194647775;
+IF BounceRates >= 0.055777778 AND BounceRates < . THEN WOE_BounceRates =3.0600144109;
+IF Browser >= 0 AND Browser < . THEN WOE_Browser =0;
+IF Browser >= 0 AND Browser < 1.5 THEN WOE_Browser =0.0269097947;
+IF Browser >= 1.5 AND Browser < 2.5 THEN WOE_Browser =0.0050621627;
+IF Browser >= 2.5 AND Browser < 3.5 THEN WOE_Browser =1.3069694539;
+IF Browser >= 3.5 AND Browser < 4.5 THEN WOE_Browser =-0.161635341;
+IF Browser >= 4.5 AND Browser < 5.5 THEN WOE_Browser =-0.154344184;
+IF Browser >= 5.5 AND Browser < . THEN WOE_Browser =0.0022467465;
+IF ExitRates >= 0 AND ExitRates < . THEN WOE_ExitRates =0;
+IF ExitRates >= 0 AND ExitRates < 0.004610177 THEN WOE_ExitRates =-0.833191889;
+IF ExitRates >= 0.004610177 AND ExitRates < 0.007589517 THEN WOE_ExitRates =-0.791029994;
+IF ExitRates >= 0.007589517 AND ExitRates < 0.010014556 THEN WOE_ExitRates =-0.649315654;
+IF ExitRates >= 0.010014556 AND ExitRates < 0.012187496 THEN WOE_ExitRates =-0.759893306;
+IF ExitRates >= 0.012187496 AND ExitRates < 0.0142890875 THEN WOE_ExitRates =-0.483886265;
+IF ExitRates >= 0.0142890875 AND ExitRates < 0.016366342 THEN WOE_ExitRates =-0.437650558;
+IF ExitRates >= 0.016366342 AND ExitRates < 0.018445041 THEN WOE_ExitRates =-0.491311405;
+IF ExitRates >= 0.018445041 AND ExitRates < 0.0207033345 THEN WOE_ExitRates =-0.3338528;
+IF ExitRates >= 0.0207033345 AND ExitRates < 0.023170732 THEN WOE_ExitRates =-0.375047485;
+IF ExitRates >= 0.023170732 AND ExitRates < 0.0255036075 THEN WOE_ExitRates =0.0730158174;
+IF ExitRates >= 0.0255036075 AND ExitRates < 0.0285742135 THEN WOE_ExitRates =-0.118705864;
+IF ExitRates >= 0.0285742135 AND ExitRates < 0.033237204 THEN WOE_ExitRates =0.1927650705;
+IF ExitRates >= 0.033237204 AND ExitRates < 0.036923077 THEN WOE_ExitRates =0.5378073997;
+IF ExitRates >= 0.036923077 AND ExitRates < 0.041590767 THEN WOE_ExitRates =0.3247858888;
+IF ExitRates >= 0.041590767 AND ExitRates < 0.0500778165 THEN WOE_ExitRates =1.0913242336;
+IF ExitRates >= 0.0500778165 AND ExitRates < 0.059353832 THEN WOE_ExitRates =0.9048299225;
+IF ExitRates >= 0.059353832 AND ExitRates < 0.0733730155 THEN WOE_ExitRates =1.1380263595;
+IF ExitRates >= 0.0733730155 AND ExitRates < 0.1002552555 THEN WOE_ExitRates =2.2156362607;
+IF ExitRates >= 0.1002552555 AND ExitRates < . THEN WOE_ExitRates =3.9035457885;
+IF Informational >= 0 AND Informational < . THEN WOE_Informational =0;
+IF Informational >= 0 AND Informational < 0.5 THEN WOE_Informational =0.1867248405;
+IF Informational >= 0.5 AND Informational < 1.5 THEN WOE_Informational =-0.464243063;
+IF Informational >= 1.5 AND Informational < 2.5 THEN WOE_Informational =-0.474714363;
+IF Informational >= 2.5 AND Informational < 3.5 THEN WOE_Informational =-0.655660186;
+IF Informational >= 3.5 AND Informational < . THEN WOE_Informational =-0.681832759;
+IF Informational_Duration >= 0 AND Informational_Duration < . THEN WOE_Informational_Duration =0;
+IF Informational_Duration >= 0 AND Informational_Duration < 0.5 THEN WOE_Informational_Duration =0.171837691;
+IF Informational_Duration >= 0.5 AND Informational_Duration < 26.75 THEN WOE_Informational_Duration =-0.355194775;
+IF Informational_Duration >= 191.80833335 AND Informational_Duration < . THEN WOE_Informational_Duration =-0.795825315;
+IF Informational_Duration >= 26.75 AND Informational_Duration < 71.1 THEN WOE_Informational_Duration =-0.42784912;
+IF Informational_Duration >= 71.1 AND Informational_Duration < 191.80833335 THEN WOE_Informational_Duration =-0.586540419;
+IF Month_FIXED >= 0 AND Month_FIXED < . THEN WOE_Month_FIXED =0;
+IF Month_FIXED >= 0 AND Month_FIXED < 4 THEN WOE_Month_FIXED =0.5851508872;
+IF Month_FIXED >= 10.5 AND Month_FIXED < 11.5 THEN WOE_Month_FIXED =-0.621056861;
+IF Month_FIXED >= 11.5 AND Month_FIXED < . THEN WOE_Month_FIXED =0.2871978204;
+IF Month_FIXED >= 4 AND Month_FIXED < 5.5 THEN WOE_Month_FIXED =0.362398439;
+IF Month_FIXED >= 5.5 AND Month_FIXED < 6.5 THEN WOE_Month_FIXED =0.5419837137;
+IF Month_FIXED >= 6.5 AND Month_FIXED < 7.5 THEN WOE_Month_FIXED =-0.035247458;
+IF Month_FIXED >= 7.5 AND Month_FIXED < 9.5 THEN WOE_Month_FIXED =-0.286447332;
+IF Month_FIXED >= 9.5 AND Month_FIXED < 10.5 THEN WOE_Month_FIXED =-0.129023055;
+IF OperatingSystems >= 0 AND OperatingSystems < . THEN WOE_OperatingSystems =0;
+IF OperatingSystems >= 0 AND OperatingSystems < 1.5 THEN WOE_OperatingSystems =0.0314108067;
+IF OperatingSystems >= 1.5 AND OperatingSystems < 2.5 THEN WOE_OperatingSystems =-0.139580337;
+IF OperatingSystems >= 2.5 AND OperatingSystems < 3.5 THEN WOE_OperatingSystems =0.4812844886;
+IF OperatingSystems >= 3.5 AND OperatingSystems < . THEN WOE_OperatingSystems =-0.219631783;
+IF PageValues >= 0 AND PageValues < . THEN WOE_PageValues =0;
+IF PageValues >= 0 AND PageValues < 0.019017271 THEN WOE_PageValues =1.5188460888;
+IF PageValues >= 0.019017271 AND PageValues < 2.924161864 THEN WOE_PageValues =-1.147339908;
+IF PageValues >= 18.538267335 AND PageValues < 38.47099594 THEN WOE_PageValues =-2.292860854;
+IF PageValues >= 2.924161864 AND PageValues < 9.081724709 THEN WOE_PageValues =-1.290061892;
+IF PageValues >= 38.47099594 AND PageValues < . THEN WOE_PageValues =-2.952002782;
+IF PageValues >= 9.081724709 AND PageValues < 18.538267335 THEN WOE_PageValues =-1.806237166;
+IF ProductRelated >= 0 AND ProductRelated < . THEN WOE_ProductRelated =0;
+IF ProductRelated >= 0 AND ProductRelated < 1.5 THEN WOE_ProductRelated =1.9525914926;
+IF ProductRelated >= 1.5 AND ProductRelated < 3.5 THEN WOE_ProductRelated =1.2330562047;
+IF ProductRelated >= 109.5 AND ProductRelated < . THEN WOE_ProductRelated =-1.0292497;
+IF ProductRelated >= 11.5 AND ProductRelated < 13.5 THEN WOE_ProductRelated =0.1876287494;
+IF ProductRelated >= 13.5 AND ProductRelated < 15.5 THEN WOE_ProductRelated =-0.083275427;
+IF ProductRelated >= 15.5 AND ProductRelated < 18.5 THEN WOE_ProductRelated =0.0538818628;
+IF ProductRelated >= 18.5 AND ProductRelated < 21.5 THEN WOE_ProductRelated =-0.28714619;
+IF ProductRelated >= 21.5 AND ProductRelated < 24.5 THEN WOE_ProductRelated =-0.329554933;
+IF ProductRelated >= 24.5 AND ProductRelated < 28.5 THEN WOE_ProductRelated =-0.185749417;
+IF ProductRelated >= 28.5 AND ProductRelated < 32.5 THEN WOE_ProductRelated =-0.53054681;
+IF ProductRelated >= 3.5 AND ProductRelated < 4.5 THEN WOE_ProductRelated =1.2361666272;
+IF ProductRelated >= 32.5 AND ProductRelated < 38.5 THEN WOE_ProductRelated =-0.235822455;
+IF ProductRelated >= 38.5 AND ProductRelated < 46.5 THEN WOE_ProductRelated =-0.203815068;
+IF ProductRelated >= 4.5 AND ProductRelated < 6.5 THEN WOE_ProductRelated =1.0093933078;
+IF ProductRelated >= 46.5 AND ProductRelated < 57.5 THEN WOE_ProductRelated =-0.360507244;
+IF ProductRelated >= 57.5 AND ProductRelated < 74.5 THEN WOE_ProductRelated =-0.385737635;
+IF ProductRelated >= 6.5 AND ProductRelated < 7.5 THEN WOE_ProductRelated =0.6120123181;
+IF ProductRelated >= 7.5 AND ProductRelated < 9.5 THEN WOE_ProductRelated =0.4032575042;
+IF ProductRelated >= 74.5 AND ProductRelated < 109.5 THEN WOE_ProductRelated =-0.67622083;
+IF ProductRelated >= 9.5 AND ProductRelated < 11.5 THEN WOE_ProductRelated =0.3543536972;
+IF ProductRelated_Duration >= 0 AND ProductRelated_Duration< . THEN WOE_ProductRelated_Duration=0;
+IF ProductRelated_Duration >= 0 AND ProductRelated_Duration< 0.5 THEN WOE_ProductRelated_Duration=2.5020420087;
+IF ProductRelated_Duration >= 0.5 AND ProductRelated_Duration< 38.15 THEN WOE_ProductRelated_Duration=1.1199351822;
+IF ProductRelated_Duration >= 1036.9433965 AND ProductRelated_Duration< 1242.776046 THEN WOE_ProductRelated_Duration=-0.370557579;
+IF ProductRelated_Duration >= 1242.776046 AND ProductRelated_Duration< 1493.524542 THEN WOE_ProductRelated_Duration=-0.438216228;
+IF ProductRelated_Duration >= 128.2833333 AND ProductRelated_Duration< 184.125 THEN WOE_ProductRelated_Duration=0.9743281711;
+IF ProductRelated_Duration >= 1493.524542 AND ProductRelated_Duration< 1802.9583335 THEN WOE_ProductRelated_Duration=-0.043822485;
+IF ProductRelated_Duration >= 1802.9583335 AND ProductRelated_Duration< 2220.369066 THEN WOE_ProductRelated_Duration=-0.401570236;
+IF ProductRelated_Duration >= 184.125 AND ProductRelated_Duration< 244.725 THEN WOE_ProductRelated_Duration=1.0293939745;
+IF ProductRelated_Duration >= 2220.369066 AND ProductRelated_Duration< 2871.1835495 THEN WOE_ProductRelated_Duration=-0.421918439;
+IF ProductRelated_Duration >= 244.725 AND ProductRelated_Duration< 314.84166665 THEN WOE_ProductRelated_Duration=0.3852389987;
+IF ProductRelated_Duration >= 2871.1835495 AND ProductRelated_Duration< 4292.1166665 THEN WOE_ProductRelated_Duration=-0.697475676;
+IF ProductRelated_Duration >= 314.84166665 AND ProductRelated_Duration< 399.25 THEN WOE_ProductRelated_Duration=0.1287162253;
+IF ProductRelated_Duration >= 38.15 AND ProductRelated_Duration< 76.75 THEN WOE_ProductRelated_Duration=1.674888957;
+IF ProductRelated_Duration >= 399.25 AND ProductRelated_Duration< 487.00919575 THEN WOE_ProductRelated_Duration=0.4379739412;
+IF ProductRelated_Duration >= 4292.1166665 AND ProductRelated_Duration< . THEN WOE_ProductRelated_Duration=-1.105099222;
+IF ProductRelated_Duration >= 487.00919575 AND ProductRelated_Duration< 599 THEN WOE_ProductRelated_Duration=-0.247778191;
+IF ProductRelated_Duration >= 599 AND ProductRelated_Duration< 717.53333335 THEN WOE_ProductRelated_Duration=-0.12405347;
+IF ProductRelated_Duration >= 717.53333335 AND ProductRelated_Duration< 854.30982905 THEN WOE_ProductRelated_Duration=-0.37036203;
+IF ProductRelated_Duration >= 76.75 AND ProductRelated_Duration< 128.2833333 THEN WOE_ProductRelated_Duration=0.9030853738;
+IF ProductRelated_Duration >= 854.30982905 AND ProductRelated_Duration< 1036.9433965 THEN WOE_ProductRelated_Duration=-0.450745173;
+IF REVENUE_N >= 0 AND REVENUE_N < . THEN WOE_REVENUE_N =0;
+IF REVENUE_N >= 0 AND REVENUE_N < 0.5 THEN WOE_REVENUE_N =7.9473911799;
+IF REVENUE_N >= 0.5 AND REVENUE_N < . THEN WOE_REVENUE_N =-9.623862609;
+IF Region >= 0 AND Region < . THEN WOE_Region =0;
+IF Region >= 0 AND Region < 1.5 THEN WOE_Region =-0.032344698;
+IF Region >= 1.5 AND Region < 2.5 THEN WOE_Region =-0.018314063;
+IF Region >= 2.5 AND Region < 3.5 THEN WOE_Region =0.0990351936;
+IF Region >= 3.5 AND Region < 4.5 THEN WOE_Region =0.0285640548;
+IF Region >= 4.5 AND Region < 6.5 THEN WOE_Region =-0.0324911;
+IF Region >= 6.5 AND Region < 7.5 THEN WOE_Region =-0.046723209;
+IF Region >= 7.5 AND Region < 8.5 THEN WOE_Region =0.1731452836;
+IF Region >= 8.5 AND Region < . THEN WOE_Region =-0.160897556;
+IF SpecialDay >= 0 AND SpecialDay < . THEN WOE_SpecialDay =0;
+IF SpecialDay >= 0 AND SpecialDay < 0.1 THEN WOE_SpecialDay =-0.079185201;
+IF SpecialDay >= 0.1 AND SpecialDay < 0.3 THEN WOE_SpecialDay =0.9468729508;
+IF SpecialDay >= 0.3 AND SpecialDay < 0.7 THEN WOE_SpecialDay =0.839494271;
+IF SpecialDay >= 0.7 AND SpecialDay < . THEN WOE_SpecialDay =1.4747188038;
+IF TrafficType >= 0 AND TrafficType < . THEN WOE_TrafficType =0;
+IF TrafficType >= 0 AND TrafficType < 1.5 THEN WOE_TrafficType =0.3765561352;
+IF TrafficType >= 1.5 AND TrafficType < 2.5 THEN WOE_TrafficType =-0.383060466;
+IF TrafficType >= 11.5 AND TrafficType < 13.5 THEN WOE_TrafficType =1.0463441828;
+IF TrafficType >= 13.5 AND TrafficType < . THEN WOE_TrafficType =-0.319390341;
+IF TrafficType >= 2.5 AND TrafficType < 3.5 THEN WOE_TrafficType =0.640999855;
+IF TrafficType >= 3.5 AND TrafficType < 4.5 THEN WOE_TrafficType =-0.017955961;
+IF TrafficType >= 4.5 AND TrafficType < 6.5 THEN WOE_TrafficType =-0.011509997;
+IF TrafficType >= 6.5 AND TrafficType < 8.5 THEN WOE_TrafficType =-0.577571749;
+IF TrafficType >= 8.5 AND TrafficType < 11.5 THEN WOE_TrafficType =-0.360293317;
+IF WEEKEND_N >= 0 AND WEEKEND_N < . THEN WOE_WEEKEND_N =0;
+IF WEEKEND_N >= 0 AND WEEKEND_N < 0.5 THEN WOE_WEEKEND_N =0.0434884248;
+IF WEEKEND_N >= 0.5 AND WEEKEND_N < . THEN WOE_WEEKEND_N =-0.138307406;
+IF v_TYPE_N >= 0 AND v_TYPE_N < . THEN WOE_v_TYPE_N =0;
+IF v_TYPE_N >= 0 AND v_TYPE_N < 0.5 THEN WOE_v_TYPE_N =-0.591248974;
+IF v_TYPE_N >= 0.5 AND v_TYPE_N < . THEN WOE_v_TYPE_N =0.1222502138;
+		OUTPUT;
+	END;
+RUN;
+
+data py.ONLINE_STORE_T_W;
+	set py.online_store_t_w;
+	array num _numeric_;
+
+	do over num;
+
+		if num=. then
+			num=divide(num,0);
+	end;
+run;
+
+PROC SORT DATA=PY.ONLINE_STORE_T_W;
+	BY REVENUE_N month_fixed;
+RUN;
+
+PROC CORR DATA=PY.ONLINE_STORE_T_W OUTs=CORR_T cov;
+	/* WITH REVENUE_n; */;
+	VAR revenue_N WOE_:;
+RUN;
+proc print data=corr_t;run;
+
+%let woe=
+	WOE_Administrative	
+/* 	WOE_Administrative_Duration	 */
+	WOE_BounceRates	
+	WOE_Browser	
+	WOE_ExitRates	
+	WOE_Informational	
+/* 	WOE_Informational_Duration	 */
+	WOE_Month_FIXED	
+	WOE_OperatingSystems	
+	WOE_PageValues	
+	WOE_ProductRelated	
+/* 	WOE_ProductRelated_Duration	 */
+/* 	WOE_REVENUE_N	 */
+	WOE_Region	
+	WOE_SpecialDay	
+	WOE_TrafficType	
+	WOE_WEEKEND_N	
+	WOE_v_TYPE_N	;
+;
+;
+*Bootstrap*/
+/*1.Clean work library*/
+	run;
+%let NumSamples = 500 ;
+
+/* number of bootstrap resamples */
+%put &NumSamples.;
+
+/* 2. Generate many bootstrap samples */
+proc Surveyselect data=PY.ONLINE_STORE_T_W NOPRINT seed=4201138 
+		out=py.bootstrap(rename=(Replicate=SampleID)) outhits 
+		method=urs               /* resample with replacement */
+		samprate=1             /* each bootstrap sample has N observations */
+
+		/* OUTHITS                 option to suppress the frequency var */
+		reps=&NumSamples;
+	/* generate NumSamples bootstrap resamples */
+	/*	 strata month default_30*/;
+run;
+
+/*ods oFF, THIS IS ALWAYS OFF IN MEMORY INTENSIVE PROCESSES*/
+%macro ODSOff();
+	/* Call prior to BY-group processing */
+	ods graphics off;
+	ods exclude all;
+	ods noresults;
+%mend;
+
+%macro ODSOn();
+	/* Call after BY-group processing */
+	ods graphics on;
+	ods exclude none;
+	ods results;
+%mend;
+
+%ODSOff();
+%ODSOn();
+
+proc Logistic DATA=py.LOGIT_BOOT  outmodel=PY.MODEL_1 descending outest=_pe2 namelen=50;
+	model revenue_n=&woe. / lackfit rsquare selection=stepwise slentry=0.90 
+		slstay=0.05;
+
+	/* 	by SampleID; */
+	output out=logit predicted=score2;
+	ods output ParameterEstimates=OutputStats;
+	;
+run;
+
+%ODSOn();
+
+proc Transpose data=outputstats out=boot_stat;
+	/* 	by SampleID; */
+	id variable;
+run;
+
+/* --------------------- Bootstrap RESULTS - estimates, stederror, p-values --------------------- */
+data boot_stat_err;
+	set boot_stat;
+
+	if _name_="StdErr";
+run;
+
+data boot_stat_prbsquare;
+	set boot_stat;
+
+	if _name_="ProbChiSq";
+run;
+
+data boot_stat_estimate;
+	set boot_stat;
+
+	if _name_="Estimate";
+run;
+
+proc Transpose data=boot_stat_estimate out=tr_boot_est;
+	/* 	by SampleID; */
+	id _name_;
+run;
+
+proc Transpose data=boot_stat_err out=tr_boot_err;
+	/* 	by SampleID; */
+	id _name_;
+run;
+
+proc Transpose data=boot_stat_prbsquare out=tr_boot_pval;
+	/* 	by SampleID; */
+	id _name_;
+run;
+
+proc Sql;
+	create table t_stat as select a.*, b.StdErr, c.ProbChiSq from tr_boot_est a 
+		left join tr_boot_err b on a._name_=b._name_ left join tr_boot_pval c on 
+		a._name_=c._name_;
+quit;
+
+data T;
+	set t_stat;
+/* 	RENAME _NAME_=variable; */
+	/* 	by SampleID; */
+	t_stat=Estimate/Stderr;
+	theta=sqrt(Estimate*2+t_stat**2);
+run;
+
+PROC SORT DATA=T;
+	BY _NAME_;
+RUN;
+
+DATA PY.SCORE_T_WOE;
+	/* ADD parameters to dataset*/
+	if _N_=0 then
+		set PY.bins_if_woe t;
+	call missing(score);
+
+	if _N_=1 then
+		do;
+			declare hash h(DATAset:'T', hashexp:20, multiDATA:'Y');
+			h.definekey('_NAME_');
+			h.defineDATA(all:'Y');
+			h.definedone();
+		end;
+
+	do until(eof);
+		set PY.bins_if_woe end=eof;;
+		rc=h.find();
+
+		DO WHILE(RC=0);
+			OUTPUT;
+			RC=H.FIND_NEXT();
+		end;
+		SCORE=ESTIMATE*WOE+divide(-1.732970561, 14);
+		output;
+
+		if rc ne 0 then
+			output;
+		DROP RC IF_B;
+	END;
+
+	/* 		end; */
+RUN;
+
+PROC SORT DATA=PY.SCORE_T_WOE NODUPKEY;BY _ALL_;RUN;
+
+/*  */
+/* DX^2/DT^2=	аlpha*(1-п) ; */
+/*  */
+/* DX/DT=Ct+C2;->d/dx i *x i */
+/*  */
+/* X(t)=divide(C*X_2,2) + c2x +c; */
+
+/* 	Score_i=(YX + INTERCEPT/14) ×  */Program
+
+/* βi — logistic regression coefficient for the variable Xi α — logistic  */
+/* 		regression intercept WoE — Weight of Evidence value for variable Xi  */
+/* 		n — number of independent variable Xi in the model Factor, Offset — known as  */
+/* 		scaling parameter, where */
+/*CALCULATE SOMERSD (GINI)*/;
+;
+
+PROC Freq DATA=logit ;
+	/* (WHERE=(SCORE^=.)); */
+	BY MONTH_FIXED;
+	tables revenue_N*SCORE2/ measures alpha=0.1  OUT=PY.TRAIN_SC;
+
+	/* 	FORMAT SCORE2 SCORE_F.; */
+	Test SMDCR;
+	ods output SomersDCR=SomersD_Mod;
+RUN;
+
+DATA py.SomersD_Mod;
+	set SomersD_Mod;
+	length name $50.;
+
+	if Label1="Somers' D C|R" then
+		Label1="GINI";
+	Name="SCORE";
+RUN;
+
+DATA py.SomersD_Mod_PV;
+	set py.SomersD_Mod;
+	where Label1="GINI";
+	RENAME nValue1=GINI;
+	keep period name GINI nValue1;
+RUN;
+
+/*nON PARAMETRIC TEST FOR KS*/;
+
+PROC Npar1way DATA=logit edf;
+	/* 	by period business_segment; */
+	class revenue_n;
+	var score2;
+	output out=KS edf;
+RUN;
+
+/*Test for normality and estimating the type of calibration(sigmoid) because scores are already in such distribution*/
+PROC Univariate DATA=logit outtable=logit2 normal;
+	var revenue_n score2;
+	;	
+	HISTOGRAM;
+/* 	norma REVENUE_N; */
+	inset normal(mu sigma);
+
+	/* 	by month_fixed; */
+	qqplot score2 /normal  (mu=est sigma=est color=red L=1);
+
+	/* 	FORMAT SCORE2 SCORE_F.; */
+RUN;
+
+PROC FREQ DATA=LOGIT;
+	/* 	by month_fixed; */
+	tables SCORE2 / measures alpha=0.1;
+run;
+
+/*  */
+/* Herfindal_index=HHI-1 */
+/* PSI=(freq_oot-freq_mod)*log(freq_oot/freq_mod) */
