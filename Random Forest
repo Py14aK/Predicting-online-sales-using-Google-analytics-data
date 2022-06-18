@@ -1,0 +1,42 @@
+	select name into :line_NAMES separated by "," from NAMES;
+quit;
+/*  */
+/* Administrative Administrative_Duration BounceRates Browser ExitRates  */
+/* 	Informational Informational_Duration Month_FIXED NumberHits OperatingSystems  */
+/* 	PageValues ProductRelated ProductRelated_Duration REVENUE_N Region SampleID  */
+/* 	SpecialDay TrafficType WEEKEND_N; */
+
+data py.TEST_scored;
+	do _n_=1 by 1 until(eof);
+		set py.online_store_test end=eof;
+		ID=_N_;
+		output;
+	end;
+run;
+proc hpforest data=py.TEST_scored maxtrees=100 vars_to_try=20 seed=1138 
+		 maxdepth=50 leafsize=12 alpha=0.1;
+	target revenue_n /level=binary;
+	input Administrative Administrative_Duration BounceRates Browser ExitRates 
+		Informational Informational_Duration Month_FIXED OperatingSystems PageValues 
+		ProductRelated ProductRelated_Duration Region SpecialDay TrafficType 
+		WEEKEND_N /level=nominal;
+	ods output fitstatistics=fit;
+	save file="/home/u60806848/New Folder/mgm2/HPFOREst";
+run;
+
+
+proc hp4score data=py.TEST_scored;
+	id id ;
+	score file="/home/u60806848/New Folder/mgm2/HPFOREst" out=py.Rforest_scored;
+run;
+
+
+PROC Freq DATA=py.Rforest_scored;
+	;
+/* 	BY MONTH_FIXED; */
+	tables revenue_N*P_REVENUE_N0/ measures alpha=0.1 ;
+	
+/* 	tables P_1 / measures alpha=0.1 outcum outpct out=PY.TEST_SCp1; */
+	Test SMDCR;
+	ods output SomersDCR=py.SomersD_randomforest;
+RUN;
