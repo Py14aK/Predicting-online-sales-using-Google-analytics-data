@@ -1,0 +1,895 @@
+/* SCORING TEST */
+data py.test_scored;
+	;
+
+	do until(eof);
+		set py.online_store_test end=eof;
+
+		IF Administrative >=0 AND Administrative < . THEN
+			WOE_Administrative=0;
+
+		IF Administrative >=0 AND Administrative < 0.5 THEN
+			WOE_Administrative=0.6388235755;
+
+		IF Administrative >=0.5 AND Administrative < 1.5 THEN
+			WOE_Administrative=-0.382035853;
+
+		IF Administrative >=1.5 AND Administrative < 2.5 THEN
+			WOE_Administrative=-0.225855315;
+
+		IF Administrative >=2.5 AND Administrative < 3.5 THEN
+			WOE_Administrative=-0.245106074;
+
+		IF Administrative >=3.5 AND Administrative < 4.5 THEN
+			WOE_Administrative=-0.348284643;
+
+		IF Administrative >=4.5 AND Administrative < 5.5 THEN
+			WOE_Administrative=-0.286882155;
+
+		IF Administrative >=5.5 AND Administrative < 7.5 THEN
+			WOE_Administrative=-0.476219255;
+
+		IF Administrative >=7.5 AND Administrative < 9.5 THEN
+			WOE_Administrative=-0.734963923;
+
+		IF Administrative >=9.5 AND Administrative < . THEN
+			WOE_Administrative=-0.650504218;
+
+		IF Administrative_Duration >=0 AND Administrative_Duration< . THEN
+			WOE_Administrative_Duration=0;
+
+		IF Administrative_Duration >=0 AND Administrative_Duration< 0.6666666665 THEN
+			WOE_Administrative_Duration=0.598702677;
+
+		IF Administrative_Duration >=0.6666666665 AND Administrative_Duration< 8.05 
+			THEN
+				WOE_Administrative_Duration=-0.012678904;
+
+		IF Administrative_Duration >=120.63333335 AND 
+			Administrative_Duration< 161.05384615 THEN
+				WOE_Administrative_Duration=-0.235512905;
+
+		IF Administrative_Duration >=161.05384615 AND 
+			Administrative_Duration< 222.16666665 THEN
+				WOE_Administrative_Duration=-0.486169585;
+
+		IF Administrative_Duration >=22.225 AND Administrative_Duration< 37.225 THEN
+			WOE_Administrative_Duration=-0.43942141;
+
+		IF Administrative_Duration >=222.16666665 AND 
+			Administrative_Duration< 346.47982025 THEN
+				WOE_Administrative_Duration=-0.545914429;
+
+		IF Administrative_Duration >=346.47982025 AND Administrative_Duration< . THEN
+			WOE_Administrative_Duration=-0.667618029;
+
+		IF Administrative_Duration >=37.225 AND Administrative_Duration< 53.39047619 
+			THEN
+				WOE_Administrative_Duration=-0.517673607;
+
+		IF Administrative_Duration >=53.39047619 AND 
+			Administrative_Duration< 70.633333335 THEN
+				WOE_Administrative_Duration=-0.281305933;
+
+		IF Administrative_Duration >=70.633333335 AND 
+			Administrative_Duration< 92.791666665 THEN
+				WOE_Administrative_Duration=-0.319905572;
+
+		IF Administrative_Duration >=8.05 AND Administrative_Duration< 22.225 THEN
+			WOE_Administrative_Duration=-0.187310804;
+
+		IF Administrative_Duration >=92.791666665 AND 
+			Administrative_Duration< 120.63333335 THEN
+				WOE_Administrative_Duration=-0.306510558;
+
+		IF BounceRates >=0 AND BounceRates < . THEN
+			WOE_BounceRates=0;
+
+		IF BounceRates >=0 AND BounceRates < 0.00001675 THEN
+			WOE_BounceRates=-0.242015683;
+
+		IF BounceRates >=0.00001675 AND BounceRates < 0.0000394 THEN
+			WOE_BounceRates=-0.066746125;
+
+		IF BounceRates >=0.0000394 AND BounceRates < 0.003034139 THEN
+			WOE_BounceRates=-0.666839614;
+
+		IF BounceRates >=0.003034139 AND BounceRates < 0.005012563 THEN
+			WOE_BounceRates=-0.422007641;
+
+		IF BounceRates >=0.005012563 AND BounceRates < 0.007134647 THEN
+			WOE_BounceRates=-0.417229099;
+
+		IF BounceRates >=0.007134647 AND BounceRates < 0.009527221 THEN
+			WOE_BounceRates=-0.2979004;
+
+		IF BounceRates >=0.009527221 AND BounceRates < 0.012731561 THEN
+			WOE_BounceRates=0.0422441587;
+
+		IF BounceRates >=0.012731561 AND BounceRates < 0.0167006805 THEN
+			WOE_BounceRates=0.2130098822;
+
+		IF BounceRates >=0.0167006805 AND BounceRates < 0.02269697 THEN
+			WOE_BounceRates=0.641289668;
+
+		IF BounceRates >=0.02269697 AND BounceRates < 0.0335616435 THEN
+			WOE_BounceRates=0.9221388288;
+
+		IF BounceRates >=0.0335616435 AND BounceRates < 0.055777778 THEN
+			WOE_BounceRates=1.2194647775;
+
+		IF BounceRates >=0.055777778 AND BounceRates < . THEN
+			WOE_BounceRates=3.0600144109;
+
+		IF Browser >=0 AND Browser < . THEN
+			WOE_Browser=0;
+
+		IF Browser >=0 AND Browser < 1.5 THEN
+			WOE_Browser=0.0269097947;
+
+		IF Browser >=1.5 AND Browser < 2.5 THEN
+			WOE_Browser=0.0050621627;
+
+		IF Browser >=2.5 AND Browser < 3.5 THEN
+			WOE_Browser=1.3069694539;
+
+		IF Browser >=3.5 AND Browser < 4.5 THEN
+			WOE_Browser=-0.161635341;
+
+		IF Browser >=4.5 AND Browser < 5.5 THEN
+			WOE_Browser=-0.154344184;
+
+		IF Browser >=5.5 AND Browser < . THEN
+			WOE_Browser=0.0022467465;
+
+		IF ExitRates >=0 AND ExitRates < . THEN
+			WOE_ExitRates=0;
+
+		IF ExitRates >=0 AND ExitRates < 0.004610177 THEN
+			WOE_ExitRates=-0.833191889;
+
+		IF ExitRates >=0.004610177 AND ExitRates < 0.007589517 THEN
+			WOE_ExitRates=-0.791029994;
+
+		IF ExitRates >=0.007589517 AND ExitRates < 0.010014556 THEN
+			WOE_ExitRates=-0.649315654;
+
+		IF ExitRates >=0.010014556 AND ExitRates < 0.012187496 THEN
+			WOE_ExitRates=-0.759893306;
+
+		IF ExitRates >=0.012187496 AND ExitRates < 0.0142890875 THEN
+			WOE_ExitRates=-0.483886265;
+
+		IF ExitRates >=0.0142890875 AND ExitRates < 0.016366342 THEN
+			WOE_ExitRates=-0.437650558;
+
+		IF ExitRates >=0.016366342 AND ExitRates < 0.018445041 THEN
+			WOE_ExitRates=-0.491311405;
+
+		IF ExitRates >=0.018445041 AND ExitRates < 0.0207033345 THEN
+			WOE_ExitRates=-0.3338528;
+
+		IF ExitRates >=0.0207033345 AND ExitRates < 0.023170732 THEN
+			WOE_ExitRates=-0.375047485;
+
+		IF ExitRates >=0.023170732 AND ExitRates < 0.0255036075 THEN
+			WOE_ExitRates=0.0730158174;
+
+		IF ExitRates >=0.0255036075 AND ExitRates < 0.0285742135 THEN
+			WOE_ExitRates=-0.118705864;
+
+		IF ExitRates >=0.0285742135 AND ExitRates < 0.033237204 THEN
+			WOE_ExitRates=0.1927650705;
+
+		IF ExitRates >=0.033237204 AND ExitRates < 0.036923077 THEN
+			WOE_ExitRates=0.5378073997;
+
+		IF ExitRates >=0.036923077 AND ExitRates < 0.041590767 THEN
+			WOE_ExitRates=0.3247858888;
+
+		IF ExitRates >=0.041590767 AND ExitRates < 0.0500778165 THEN
+			WOE_ExitRates=1.0913242336;
+
+		IF ExitRates >=0.0500778165 AND ExitRates < 0.059353832 THEN
+			WOE_ExitRates=0.9048299225;
+
+		IF ExitRates >=0.059353832 AND ExitRates < 0.0733730155 THEN
+			WOE_ExitRates=1.1380263595;
+
+		IF ExitRates >=0.0733730155 AND ExitRates < 0.1002552555 THEN
+			WOE_ExitRates=2.2156362607;
+
+		IF ExitRates >=0.1002552555 AND ExitRates < . THEN
+			WOE_ExitRates=3.9035457885;
+
+		IF Informational >=0 AND Informational < . THEN
+			WOE_Informational=0;
+
+		IF Informational >=0 AND Informational < 0.5 THEN
+			WOE_Informational=0.1867248405;
+
+		IF Informational >=0.5 AND Informational < 1.5 THEN
+			WOE_Informational=-0.464243063;
+
+		IF Informational >=1.5 AND Informational < 2.5 THEN
+			WOE_Informational=-0.474714363;
+
+		IF Informational >=2.5 AND Informational < 3.5 THEN
+			WOE_Informational=-0.655660186;
+
+		IF Informational >=3.5 AND Informational < . THEN
+			WOE_Informational=-0.681832759;
+
+		IF Informational_Duration >=0 AND Informational_Duration < . THEN
+			WOE_Informational_Duration=0;
+
+		IF Informational_Duration >=0 AND Informational_Duration < 0.5 THEN
+			WOE_Informational_Duration=0.171837691;
+
+		IF Informational_Duration >=0.5 AND Informational_Duration < 26.75 THEN
+			WOE_Informational_Duration=-0.355194775;
+
+		IF Informational_Duration >=191.80833335 AND Informational_Duration < . THEN
+			WOE_Informational_Duration=-0.795825315;
+
+		IF Informational_Duration >=26.75 AND Informational_Duration < 71.1 THEN
+			WOE_Informational_Duration=-0.42784912;
+
+		IF Informational_Duration >=71.1 AND Informational_Duration < 191.80833335 
+			THEN
+				WOE_Informational_Duration=-0.586540419;
+
+		IF Month_FIXED >=0 AND Month_FIXED < . THEN
+			WOE_Month_FIXED=0;
+
+		IF Month_FIXED >=0 AND Month_FIXED < 4 THEN
+			WOE_Month_FIXED=0.5851508872;
+
+		IF Month_FIXED >=10.5 AND Month_FIXED < 11.5 THEN
+			WOE_Month_FIXED=-0.621056861;
+
+		IF Month_FIXED >=11.5 AND Month_FIXED < . THEN
+			WOE_Month_FIXED=0.2871978204;
+
+		IF Month_FIXED >=4 AND Month_FIXED < 5.5 THEN
+			WOE_Month_FIXED=0.362398439;
+
+		IF Month_FIXED >=5.5 AND Month_FIXED < 6.5 THEN
+			WOE_Month_FIXED=0.5419837137;
+
+		IF Month_FIXED >=6.5 AND Month_FIXED < 7.5 THEN
+			WOE_Month_FIXED=-0.035247458;
+
+		IF Month_FIXED >=7.5 AND Month_FIXED < 9.5 THEN
+			WOE_Month_FIXED=-0.286447332;
+
+		IF Month_FIXED >=9.5 AND Month_FIXED < 10.5 THEN
+			WOE_Month_FIXED=-0.129023055;
+
+		IF OperatingSystems >=0 AND OperatingSystems < . THEN
+			WOE_OperatingSystems=0;
+
+		IF OperatingSystems >=0 AND OperatingSystems < 1.5 THEN
+			WOE_OperatingSystems=0.0314108067;
+
+		IF OperatingSystems >=1.5 AND OperatingSystems < 2.5 THEN
+			WOE_OperatingSystems=-0.139580337;
+
+		IF OperatingSystems >=2.5 AND OperatingSystems < 3.5 THEN
+			WOE_OperatingSystems=0.4812844886;
+
+		IF OperatingSystems >=3.5 AND OperatingSystems < . THEN
+			WOE_OperatingSystems=-0.219631783;
+
+		IF PageValues >=0 AND PageValues < . THEN
+			WOE_PageValues=0;
+
+		IF PageValues >=0 AND PageValues < 0.019017271 THEN
+			WOE_PageValues=1.5188460888;
+
+		IF PageValues >=0.019017271 AND PageValues < 2.924161864 THEN
+			WOE_PageValues=-1.147339908;
+
+		IF PageValues >=18.538267335 AND PageValues < 38.47099594 THEN
+			WOE_PageValues=-2.292860854;
+
+		IF PageValues >=2.924161864 AND PageValues < 9.081724709 THEN
+			WOE_PageValues=-1.290061892;
+
+		IF PageValues >=38.47099594 AND PageValues < . THEN
+			WOE_PageValues=-2.952002782;
+
+		IF PageValues >=9.081724709 AND PageValues < 18.538267335 THEN
+			WOE_PageValues=-1.806237166;
+
+		IF ProductRelated >=0 AND ProductRelated < . THEN
+			WOE_ProductRelated=0;
+
+		IF ProductRelated >=0 AND ProductRelated < 1.5 THEN
+			WOE_ProductRelated=1.9525914926;
+
+		IF ProductRelated >=1.5 AND ProductRelated < 3.5 THEN
+			WOE_ProductRelated=1.2330562047;
+
+		IF ProductRelated >=109.5 AND ProductRelated < . THEN
+			WOE_ProductRelated=-1.0292497;
+
+		IF ProductRelated >=11.5 AND ProductRelated < 13.5 THEN
+			WOE_ProductRelated=0.1876287494;
+
+		IF ProductRelated >=13.5 AND ProductRelated < 15.5 THEN
+			WOE_ProductRelated=-0.083275427;
+
+		IF ProductRelated >=15.5 AND ProductRelated < 18.5 THEN
+			WOE_ProductRelated=0.0538818628;
+
+		IF ProductRelated >=18.5 AND ProductRelated < 21.5 THEN
+			WOE_ProductRelated=-0.28714619;
+
+		IF ProductRelated >=21.5 AND ProductRelated < 24.5 THEN
+			WOE_ProductRelated=-0.329554933;
+
+		IF ProductRelated >=24.5 AND ProductRelated < 28.5 THEN
+			WOE_ProductRelated=-0.185749417;
+
+		IF ProductRelated >=28.5 AND ProductRelated < 32.5 THEN
+			WOE_ProductRelated=-0.53054681;
+
+		IF ProductRelated >=3.5 AND ProductRelated < 4.5 THEN
+			WOE_ProductRelated=1.2361666272;
+
+		IF ProductRelated >=32.5 AND ProductRelated < 38.5 THEN
+			WOE_ProductRelated=-0.235822455;
+
+		IF ProductRelated >=38.5 AND ProductRelated < 46.5 THEN
+			WOE_ProductRelated=-0.203815068;
+
+		IF ProductRelated >=4.5 AND ProductRelated < 6.5 THEN
+			WOE_ProductRelated=1.0093933078;
+
+		IF ProductRelated >=46.5 AND ProductRelated < 57.5 THEN
+			WOE_ProductRelated=-0.360507244;
+
+		IF ProductRelated >=57.5 AND ProductRelated < 74.5 THEN
+			WOE_ProductRelated=-0.385737635;
+
+		IF ProductRelated >=6.5 AND ProductRelated < 7.5 THEN
+			WOE_ProductRelated=0.6120123181;
+
+		IF ProductRelated >=7.5 AND ProductRelated < 9.5 THEN
+			WOE_ProductRelated=0.4032575042;
+
+		IF ProductRelated >=74.5 AND ProductRelated < 109.5 THEN
+			WOE_ProductRelated=-0.67622083;
+
+		IF ProductRelated >=9.5 AND ProductRelated < 11.5 THEN
+			WOE_ProductRelated=0.3543536972;
+
+		IF ProductRelated_Duration >=0 AND ProductRelated_Duration< . THEN
+			WOE_ProductRelated_Duration=0;
+
+		IF ProductRelated_Duration >=0 AND ProductRelated_Duration< 0.5 THEN
+			WOE_ProductRelated_Duration=2.5020420087;
+
+		IF ProductRelated_Duration >=0.5 AND ProductRelated_Duration< 38.15 THEN
+			WOE_ProductRelated_Duration=1.1199351822;
+
+		IF ProductRelated_Duration >=1036.9433965 AND 
+			ProductRelated_Duration< 1242.776046 THEN
+				WOE_ProductRelated_Duration=-0.370557579;
+
+		IF ProductRelated_Duration >=1242.776046 AND 
+			ProductRelated_Duration< 1493.524542 THEN
+				WOE_ProductRelated_Duration=-0.438216228;
+
+		IF ProductRelated_Duration >=128.2833333 AND ProductRelated_Duration< 184.125 
+			THEN
+				WOE_ProductRelated_Duration=0.9743281711;
+
+		IF ProductRelated_Duration >=1493.524542 AND 
+			ProductRelated_Duration< 1802.9583335 THEN
+				WOE_ProductRelated_Duration=-0.043822485;
+
+		IF ProductRelated_Duration >=1802.9583335 AND 
+			ProductRelated_Duration< 2220.369066 THEN
+				WOE_ProductRelated_Duration=-0.401570236;
+
+		IF ProductRelated_Duration >=184.125 AND ProductRelated_Duration< 244.725 THEN
+			WOE_ProductRelated_Duration=1.0293939745;
+
+		IF ProductRelated_Duration >=2220.369066 AND 
+			ProductRelated_Duration< 2871.1835495 THEN
+				WOE_ProductRelated_Duration=-0.421918439;
+
+		IF ProductRelated_Duration >=244.725 AND 
+			ProductRelated_Duration< 314.84166665 THEN
+				WOE_ProductRelated_Duration=0.3852389987;
+
+		IF ProductRelated_Duration >=2871.1835495 AND 
+			ProductRelated_Duration< 4292.1166665 THEN
+				WOE_ProductRelated_Duration=-0.697475676;
+
+		IF ProductRelated_Duration >=314.84166665 AND ProductRelated_Duration< 399.25 
+			THEN
+				WOE_ProductRelated_Duration=0.1287162253;
+
+		IF ProductRelated_Duration >=38.15 AND ProductRelated_Duration< 76.75 THEN
+			WOE_ProductRelated_Duration=1.674888957;
+
+		IF ProductRelated_Duration >=399.25 AND ProductRelated_Duration< 487.00919575 
+			THEN
+				WOE_ProductRelated_Duration=0.4379739412;
+
+		IF ProductRelated_Duration >=4292.1166665 AND ProductRelated_Duration< . THEN
+			WOE_ProductRelated_Duration=-1.105099222;
+
+		IF ProductRelated_Duration >=487.00919575 AND ProductRelated_Duration< 599 
+			THEN
+				WOE_ProductRelated_Duration=-0.247778191;
+
+		IF ProductRelated_Duration >=599 AND ProductRelated_Duration< 717.53333335 
+			THEN
+				WOE_ProductRelated_Duration=-0.12405347;
+
+		IF ProductRelated_Duration >=717.53333335 AND 
+			ProductRelated_Duration< 854.30982905 THEN
+				WOE_ProductRelated_Duration=-0.37036203;
+
+		IF ProductRelated_Duration >=76.75 AND ProductRelated_Duration< 128.2833333 
+			THEN
+				WOE_ProductRelated_Duration=0.9030853738;
+
+		IF ProductRelated_Duration >=854.30982905 AND 
+			ProductRelated_Duration< 1036.9433965 THEN
+				WOE_ProductRelated_Duration=-0.450745173;
+
+		IF REVENUE_N >=0 AND REVENUE_N < . THEN
+			WOE_REVENUE_N=0;
+
+		IF REVENUE_N >=0 AND REVENUE_N < 0.5 THEN
+			WOE_REVENUE_N=7.9473911799;
+
+		IF REVENUE_N >=0.5 AND REVENUE_N < . THEN
+			WOE_REVENUE_N=-9.623862609;
+
+		IF Region >=0 AND Region < . THEN
+			WOE_Region=0;
+
+		IF Region >=0 AND Region < 1.5 THEN
+			WOE_Region=-0.032344698;
+
+		IF Region >=1.5 AND Region < 2.5 THEN
+			WOE_Region=-0.018314063;
+
+		IF Region >=2.5 AND Region < 3.5 THEN
+			WOE_Region=0.0990351936;
+
+		IF Region >=3.5 AND Region < 4.5 THEN
+			WOE_Region=0.0285640548;
+
+		IF Region >=4.5 AND Region < 6.5 THEN
+			WOE_Region=-0.0324911;
+
+		IF Region >=6.5 AND Region < 7.5 THEN
+			WOE_Region=-0.046723209;
+
+		IF Region >=7.5 AND Region < 8.5 THEN
+			WOE_Region=0.1731452836;
+
+		IF Region >=8.5 AND Region < . THEN
+			WOE_Region=-0.160897556;
+
+		IF SpecialDay >=0 AND SpecialDay < . THEN
+			WOE_SpecialDay=0;
+
+		IF SpecialDay >=0 AND SpecialDay < 0.1 THEN
+			WOE_SpecialDay=-0.079185201;
+
+		IF SpecialDay >=0.1 AND SpecialDay < 0.3 THEN
+			WOE_SpecialDay=0.9468729508;
+
+		IF SpecialDay >=0.3 AND SpecialDay < 0.7 THEN
+			WOE_SpecialDay=0.839494271;
+
+		IF SpecialDay >=0.7 AND SpecialDay < . THEN
+			WOE_SpecialDay=1.4747188038;
+
+		IF TrafficType >=0 AND TrafficType < . THEN
+			WOE_TrafficType=0;
+
+		IF TrafficType >=0 AND TrafficType < 1.5 THEN
+			WOE_TrafficType=0.3765561352;
+
+		IF TrafficType >=1.5 AND TrafficType < 2.5 THEN
+			WOE_TrafficType=-0.383060466;
+
+		IF TrafficType >=11.5 AND TrafficType < 13.5 THEN
+			WOE_TrafficType=1.0463441828;
+
+		IF TrafficType >=13.5 AND TrafficType < . THEN
+			WOE_TrafficType=-0.319390341;
+
+		IF TrafficType >=2.5 AND TrafficType < 3.5 THEN
+			WOE_TrafficType=0.640999855;
+
+		IF TrafficType >=3.5 AND TrafficType < 4.5 THEN
+			WOE_TrafficType=-0.017955961;
+
+		IF TrafficType >=4.5 AND TrafficType < 6.5 THEN
+			WOE_TrafficType=-0.011509997;
+
+		IF TrafficType >=6.5 AND TrafficType < 8.5 THEN
+			WOE_TrafficType=-0.577571749;
+
+		IF TrafficType >=8.5 AND TrafficType < 11.5 THEN
+			WOE_TrafficType=-0.360293317;
+
+		IF WEEKEND_N >=0 AND WEEKEND_N < . THEN
+			WOE_WEEKEND_N=0;
+
+		IF WEEKEND_N >=0 AND WEEKEND_N < 0.5 THEN
+			WOE_WEEKEND_N=0.0434884248;
+
+		IF WEEKEND_N >=0.5 AND WEEKEND_N < . THEN
+			WOE_WEEKEND_N=-0.138307406;
+
+		IF v_TYPE_N >=0 AND v_TYPE_N < . THEN
+			WOE_v_TYPE_N=0;
+
+		IF v_TYPE_N >=0 AND v_TYPE_N < 0.5 THEN
+			WOE_v_TYPE_N=-0.591248974;
+
+		IF v_TYPE_N >=0.5 AND v_TYPE_N < . THEN
+			WOE_v_TYPE_N=0.1222502138;
+		output;
+	end;
+	*/;
+run;
+
+data py._TEST_scored;
+	set py.test_scored;
+	array num _numeric_;
+
+	do over num;
+
+		if num=. then
+			num=divide(num, 0);
+	END;
+	OUTPUT;
+RUN;
+DATA PY.TEST_SCORED;
+SET PY.TEST_SCORED;
+IF Administrative >= 0 AND Administrative < . THEN SCORE_Administrative =.;
+IF Administrative >= 0 AND Administrative < . THEN SCORE_Administrative =0.1804071276;
+IF Administrative >= 0 AND Administrative < 0.5 THEN SCORE_Administrative =-0.073652098;
+IF Administrative >= 0 AND Administrative < 0.5 THEN SCORE_Administrative =0.1804071276;
+IF Administrative >= 0.5 AND Administrative < 1.5 THEN SCORE_Administrative =-0.073652098;
+IF Administrative >= 0.5 AND Administrative < 1.5 THEN SCORE_Administrative =0.332342242;
+IF Administrative >= 1.5 AND Administrative < 2.5 THEN SCORE_Administrative =0.2702294644;
+IF Administrative >= 1.5 AND Administrative < 2.5 THEN SCORE_Administrative =0.332342242;
+IF Administrative >= 2.5 AND Administrative < 3.5 THEN SCORE_Administrative =0.2702294644;
+IF Administrative >= 2.5 AND Administrative < 3.5 THEN SCORE_Administrative =0.2778854639;
+IF Administrative >= 3.5 AND Administrative < 4.5 THEN SCORE_Administrative =0.2778854639;
+IF Administrative >= 3.5 AND Administrative < 4.5 THEN SCORE_Administrative =0.3189194339;
+IF Administrative >= 4.5 AND Administrative < 5.5 THEN SCORE_Administrative =0.2944997521;
+IF Administrative >= 4.5 AND Administrative < 5.5 THEN SCORE_Administrative =0.3189194339;
+IF Administrative >= 5.5 AND Administrative < 7.5 THEN SCORE_Administrative =0.2944997521;
+IF Administrative >= 5.5 AND Administrative < 7.5 THEN SCORE_Administrative =0.3697988467;
+IF Administrative >= 7.5 AND Administrative < 9.5 THEN SCORE_Administrative =0.3697988467;
+IF Administrative >= 7.5 AND Administrative < 9.5 THEN SCORE_Administrative =0.4727012326;
+IF Administrative >= 9.5 AND Administrative < . THEN SCORE_Administrative =0.4391117285;
+IF Administrative >= 9.5 AND Administrative < . THEN SCORE_Administrative =0.4727012326;
+IF Administrative_Duration >= 0 AND Administrative_Duration< . THEN SCORE_Administrative_Duration=0.1804071276;
+IF Administrative_Duration >= 0 AND Administrative_Duration< 0.6666666665 THEN SCORE_Administrative_Duration=-0.057696074;
+IF Administrative_Duration >= 0.6666666665 AND Administrative_Duration< 8.05 THEN SCORE_Administrative_Duration=0.1854495096;
+IF Administrative_Duration >= 120.63333335 AND Administrative_Duration< 161.05384615 THEN SCORE_Administrative_Duration=0.2740702746;
+IF Administrative_Duration >= 161.05384615 AND Administrative_Duration< 222.16666665 THEN SCORE_Administrative_Duration=0.3737560791;
+IF Administrative_Duration >= 22.225 AND Administrative_Duration< 37.225 THEN SCORE_Administrative_Duration=0.3551643965;
+IF Administrative_Duration >= 222.16666665 AND Administrative_Duration< 346.47982025 THEN SCORE_Administrative_Duration=0.3975165183;
+IF Administrative_Duration >= 346.47982025 AND Administrative_Duration< . THEN SCORE_Administrative_Duration=0.4459178668;
+IF Administrative_Duration >= 37.225 AND Administrative_Duration< 53.39047619 THEN SCORE_Administrative_Duration=0.3862851837;
+IF Administrative_Duration >= 53.39047619 AND Administrative_Duration< 70.633333335 THEN SCORE_Administrative_Duration=0.2922820963;
+IF Administrative_Duration >= 70.633333335 AND Administrative_Duration< 92.791666665 THEN SCORE_Administrative_Duration=0.307633118;
+IF Administrative_Duration >= 8.05 AND Administrative_Duration< 22.225 THEN SCORE_Administrative_Duration=0.2549003674;
+IF Administrative_Duration >= 92.791666665 AND Administrative_Duration< 120.63333335 THEN SCORE_Administrative_Duration=0.3023059397;
+IF BounceRates >= 0 AND BounceRates < . THEN SCORE_BounceRates =0.1804071276;
+IF BounceRates >= 0 AND BounceRates < . THEN SCORE_BounceRates =0.8214741898;
+IF BounceRates >= 0 AND BounceRates < 0.00001675 THEN SCORE_BounceRates =0.1804071276;
+IF BounceRates >= 0 AND BounceRates < 0.00001675 THEN SCORE_BounceRates =0.2081067933;
+IF BounceRates >= 0.00001675 AND BounceRates < 0.0000394 THEN SCORE_BounceRates =0.1880464893;
+IF BounceRates >= 0.00001675 AND BounceRates < 0.0000394 THEN SCORE_BounceRates =0.2081067933;
+IF BounceRates >= 0.0000394 AND BounceRates < 0.003034139 THEN SCORE_BounceRates =0.1880464893;
+IF BounceRates >= 0.0000394 AND BounceRates < 0.003034139 THEN SCORE_BounceRates =0.2567295963;
+IF BounceRates >= 0.003034139 AND BounceRates < 0.005012563 THEN SCORE_BounceRates =0.2287075949;
+IF BounceRates >= 0.003034139 AND BounceRates < 0.005012563 THEN SCORE_BounceRates =0.2567295963;
+IF BounceRates >= 0.005012563 AND BounceRates < 0.007134647 THEN SCORE_BounceRates =0.2281606715;
+IF BounceRates >= 0.005012563 AND BounceRates < 0.007134647 THEN SCORE_BounceRates =0.2287075949;
+IF BounceRates >= 0.007134647 AND BounceRates < 0.009527221 THEN SCORE_BounceRates =0.2145030233;
+IF BounceRates >= 0.007134647 AND BounceRates < 0.009527221 THEN SCORE_BounceRates =0.2281606715;
+IF BounceRates >= 0.009527221 AND BounceRates < 0.012731561 THEN SCORE_BounceRates =0.1755721142;
+IF BounceRates >= 0.009527221 AND BounceRates < 0.012731561 THEN SCORE_BounceRates =0.2145030233;
+IF BounceRates >= 0.012731561 AND BounceRates < 0.0167006805 THEN SCORE_BounceRates =0.1560272922;
+IF BounceRates >= 0.012731561 AND BounceRates < 0.0167006805 THEN SCORE_BounceRates =0.1755721142;
+IF BounceRates >= 0.0167006805 AND BounceRates < 0.02269697 THEN SCORE_BounceRates =0.1070089528;
+IF BounceRates >= 0.0167006805 AND BounceRates < 0.02269697 THEN SCORE_BounceRates =0.1560272922;
+IF BounceRates >= 0.02269697 AND BounceRates < 0.0335616435 THEN SCORE_BounceRates =0.0748646398;
+IF BounceRates >= 0.02269697 AND BounceRates < 0.0335616435 THEN SCORE_BounceRates =0.1070089528;
+IF BounceRates >= 0.0335616435 AND BounceRates < 0.055777778 THEN SCORE_BounceRates =0.0408344923;
+IF BounceRates >= 0.0335616435 AND BounceRates < 0.055777778 THEN SCORE_BounceRates =0.0748646398;
+IF BounceRates >= 0.055777778 AND BounceRates < . THEN SCORE_BounceRates =-0.169823796;
+IF BounceRates >= 0.055777778 AND BounceRates < . THEN SCORE_BounceRates =0.0408344923;
+IF Browser >= 0 AND Browser < . THEN SCORE_Browser =0.1804071276;
+IF Browser >= 0 AND Browser < . THEN SCORE_Browser =0.3462090415;
+IF Browser >= 0 AND Browser < 1.5 THEN SCORE_Browser =0.1563929481;
+IF Browser >= 0 AND Browser < 1.5 THEN SCORE_Browser =0.1804071276;
+IF Browser >= 1.5 AND Browser < 2.5 THEN SCORE_Browser =0.1563929481;
+IF Browser >= 1.5 AND Browser < 2.5 THEN SCORE_Browser =0.1758896764;
+IF Browser >= 2.5 AND Browser < 3.5 THEN SCORE_Browser =-0.985926525;
+IF Browser >= 2.5 AND Browser < 3.5 THEN SCORE_Browser =0.1758896764;
+IF Browser >= 3.5 AND Browser < 4.5 THEN SCORE_Browser =-0.985926525;
+IF Browser >= 3.5 AND Browser < 4.5 THEN SCORE_Browser =0.3246497776;
+IF Browser >= 4.5 AND Browser < 5.5 THEN SCORE_Browser =0.3181431824;
+IF Browser >= 4.5 AND Browser < 5.5 THEN SCORE_Browser =0.3246497776;
+IF Browser >= 5.5 AND Browser < . THEN SCORE_Browser =0.1784021412;
+IF Browser >= 5.5 AND Browser < . THEN SCORE_Browser =0.3181431824;
+IF ExitRates >= 0 AND ExitRates < . THEN SCORE_ExitRates =-0.169823796;
+IF ExitRates >= 0 AND ExitRates < . THEN SCORE_ExitRates =0.1804071276;
+IF ExitRates >= 0 AND ExitRates < 0.004610177 THEN SCORE_ExitRates =0.1804071276;
+IF ExitRates >= 0 AND ExitRates < 0.004610177 THEN SCORE_ExitRates =0.703228663;
+IF ExitRates >= 0.004610177 AND ExitRates < 0.007589517 THEN SCORE_ExitRates =0.6767723968;
+IF ExitRates >= 0.004610177 AND ExitRates < 0.007589517 THEN SCORE_ExitRates =0.703228663;
+IF ExitRates >= 0.007589517 AND ExitRates < 0.010014556 THEN SCORE_ExitRates =0.5878477323;
+IF ExitRates >= 0.007589517 AND ExitRates < 0.010014556 THEN SCORE_ExitRates =0.6767723968;
+IF ExitRates >= 0.010014556 AND ExitRates < 0.012187496 THEN SCORE_ExitRates =0.5878477323;
+IF ExitRates >= 0.010014556 AND ExitRates < 0.012187496 THEN SCORE_ExitRates =0.6572343628;
+IF ExitRates >= 0.012187496 AND ExitRates < 0.0142890875 THEN SCORE_ExitRates =0.4840420565;
+IF ExitRates >= 0.012187496 AND ExitRates < 0.0142890875 THEN SCORE_ExitRates =0.6572343628;
+IF ExitRates >= 0.0142890875 AND ExitRates < 0.016366342 THEN SCORE_ExitRates =0.4550295043;
+IF ExitRates >= 0.0142890875 AND ExitRates < 0.016366342 THEN SCORE_ExitRates =0.4840420565;
+IF ExitRates >= 0.016366342 AND ExitRates < 0.018445041 THEN SCORE_ExitRates =0.4550295043;
+IF ExitRates >= 0.016366342 AND ExitRates < 0.018445041 THEN SCORE_ExitRates =0.4887012749;
+IF ExitRates >= 0.018445041 AND ExitRates < 0.0207033345 THEN SCORE_ExitRates =0.3898972051;
+IF ExitRates >= 0.018445041 AND ExitRates < 0.0207033345 THEN SCORE_ExitRates =0.4887012749;
+IF ExitRates >= 0.0207033345 AND ExitRates < 0.023170732 THEN SCORE_ExitRates =0.3898972051;
+IF ExitRates >= 0.0207033345 AND ExitRates < 0.023170732 THEN SCORE_ExitRates =0.4157465547;
+IF ExitRates >= 0.023170732 AND ExitRates < 0.0255036075 THEN SCORE_ExitRates =0.1345902609;
+IF ExitRates >= 0.023170732 AND ExitRates < 0.0255036075 THEN SCORE_ExitRates =0.4157465547;
+IF ExitRates >= 0.0255036075 AND ExitRates < 0.0285742135 THEN SCORE_ExitRates =0.1345902609;
+IF ExitRates >= 0.0255036075 AND ExitRates < 0.0285742135 THEN SCORE_ExitRates =0.254894149;
+IF ExitRates >= 0.0285742135 AND ExitRates < 0.033237204 THEN SCORE_ExitRates =0.0594485207;
+IF ExitRates >= 0.0285742135 AND ExitRates < 0.033237204 THEN SCORE_ExitRates =0.254894149;
+IF ExitRates >= 0.033237204 AND ExitRates < 0.036923077 THEN SCORE_ExitRates =-0.157062901;
+IF ExitRates >= 0.033237204 AND ExitRates < 0.036923077 THEN SCORE_ExitRates =0.0594485207;
+IF ExitRates >= 0.036923077 AND ExitRates < 0.041590767 THEN SCORE_ExitRates =-0.023393533;
+IF ExitRates >= 0.036923077 AND ExitRates < 0.041590767 THEN SCORE_ExitRates =-0.157062901;
+IF ExitRates >= 0.041590767 AND ExitRates < 0.0500778165 THEN SCORE_ExitRates =-0.023393533;
+IF ExitRates >= 0.041590767 AND ExitRates < 0.0500778165 THEN SCORE_ExitRates =-0.504390479;
+IF ExitRates >= 0.0500778165 AND ExitRates < 0.059353832 THEN SCORE_ExitRates =-0.387366726;
+IF ExitRates >= 0.0500778165 AND ExitRates < 0.059353832 THEN SCORE_ExitRates =-0.504390479;
+IF ExitRates >= 0.059353832 AND ExitRates < 0.0733730155 THEN SCORE_ExitRates =-0.387366726;
+IF ExitRates >= 0.059353832 AND ExitRates < 0.0733730155 THEN SCORE_ExitRates =-0.533695706;
+IF ExitRates >= 0.0733730155 AND ExitRates < 0.1002552555 THEN SCORE_ExitRates =-0.533695706;
+IF ExitRates >= 0.0733730155 AND ExitRates < 0.1002552555 THEN SCORE_ExitRates =-1.209887674;
+IF ExitRates >= 0.1002552555 AND ExitRates < . THEN SCORE_ExitRates =-1.209887674;
+IF ExitRates >= 0.1002552555 AND ExitRates < . THEN SCORE_ExitRates =-2.269037988;
+IF Informational >= 0 AND Informational < . THEN SCORE_Informational =0.1804071276;
+IF Informational >= 0 AND Informational < . THEN SCORE_Informational =0.4459178668;
+IF Informational >= 0 AND Informational < 0.5 THEN SCORE_Informational =0.132722569;
+IF Informational >= 0 AND Informational < 0.5 THEN SCORE_Informational =0.1804071276;
+IF Informational >= 0.5 AND Informational < 1.5 THEN SCORE_Informational =0.132722569;
+IF Informational >= 0.5 AND Informational < 1.5 THEN SCORE_Informational =0.2989624602;
+IF Informational >= 1.5 AND Informational < 2.5 THEN SCORE_Informational =0.2989624602;
+IF Informational >= 1.5 AND Informational < 2.5 THEN SCORE_Informational =0.3016365517;
+IF Informational >= 2.5 AND Informational < 3.5 THEN SCORE_Informational =0.3016365517;
+IF Informational >= 2.5 AND Informational < 3.5 THEN SCORE_Informational =0.3478453027;
+IF Informational >= 3.5 AND Informational < . THEN SCORE_Informational =0.3478453027;
+IF Informational >= 3.5 AND Informational < . THEN SCORE_Informational =0.354529082;
+IF Informational_Duration >= 0 AND Informational_Duration < . THEN SCORE_Informational_Duration =0.1804071276;
+IF Informational_Duration >= 0 AND Informational_Duration < 0.5 THEN SCORE_Informational_Duration =0.1365243511;
+IF Informational_Duration >= 0.5 AND Informational_Duration < 26.75 THEN SCORE_Informational_Duration =0.2711144272;
+IF Informational_Duration >= 191.80833335 AND Informational_Duration < . THEN SCORE_Informational_Duration =0.3836397492;
+IF Informational_Duration >= 26.75 AND Informational_Duration < 71.1 THEN SCORE_Informational_Duration =0.289668415;
+IF Informational_Duration >= 71.1 AND Informational_Duration < 191.80833335 THEN SCORE_Informational_Duration =0.3301939524;
+IF Month_FIXED >= 0 AND Month_FIXED < . THEN SCORE_Month_FIXED =0.1107868115;
+IF Month_FIXED >= 0 AND Month_FIXED < . THEN SCORE_Month_FIXED =0.1804071276;
+IF Month_FIXED >= 0 AND Month_FIXED < 4 THEN SCORE_Month_FIXED =-0.142330878;
+IF Month_FIXED >= 0 AND Month_FIXED < 4 THEN SCORE_Month_FIXED =0.1804071276;
+IF Month_FIXED >= 10.5 AND Month_FIXED < 11.5 THEN SCORE_Month_FIXED =0.2515693598;
+IF Month_FIXED >= 10.5 AND Month_FIXED < 11.5 THEN SCORE_Month_FIXED =0.5229489521;
+IF Month_FIXED >= 11.5 AND Month_FIXED < . THEN SCORE_Month_FIXED =0.0220041349;
+IF Month_FIXED >= 11.5 AND Month_FIXED < . THEN SCORE_Month_FIXED =0.5229489521;
+IF Month_FIXED >= 4 AND Month_FIXED < 5.5 THEN SCORE_Month_FIXED =-0.019472514;
+IF Month_FIXED >= 4 AND Month_FIXED < 5.5 THEN SCORE_Month_FIXED =-0.142330878;
+IF Month_FIXED >= 5.5 AND Month_FIXED < 6.5 THEN SCORE_Month_FIXED =-0.019472514;
+IF Month_FIXED >= 5.5 AND Month_FIXED < 6.5 THEN SCORE_Month_FIXED =-0.118522168;
+IF Month_FIXED >= 6.5 AND Month_FIXED < 7.5 THEN SCORE_Month_FIXED =-0.118522168;
+IF Month_FIXED >= 6.5 AND Month_FIXED < 7.5 THEN SCORE_Month_FIXED =0.1998477446;
+IF Month_FIXED >= 7.5 AND Month_FIXED < 9.5 THEN SCORE_Month_FIXED =0.1998477446;
+IF Month_FIXED >= 7.5 AND Month_FIXED < 9.5 THEN SCORE_Month_FIXED =0.3383961911;
+IF Month_FIXED >= 9.5 AND Month_FIXED < 10.5 THEN SCORE_Month_FIXED =0.2515693598;
+IF Month_FIXED >= 9.5 AND Month_FIXED < 10.5 THEN SCORE_Month_FIXED =0.3383961911;
+IF OperatingSystems >= 0 AND OperatingSystems < . THEN SCORE_OperatingSystems =-0.251045181;
+IF OperatingSystems >= 0 AND OperatingSystems < . THEN SCORE_OperatingSystems =0.1804071276;
+IF OperatingSystems >= 0 AND OperatingSystems < 1.5 THEN SCORE_OperatingSystems =0.1566948406;
+IF OperatingSystems >= 0 AND OperatingSystems < 1.5 THEN SCORE_OperatingSystems =0.1804071276;
+IF OperatingSystems >= 1.5 AND OperatingSystems < 2.5 THEN SCORE_OperatingSystems =0.1566948406;
+IF OperatingSystems >= 1.5 AND OperatingSystems < 2.5 THEN SCORE_OperatingSystems =0.2857775198;
+IF OperatingSystems >= 2.5 AND OperatingSystems < 3.5 THEN SCORE_OperatingSystems =-0.182918655;
+IF OperatingSystems >= 2.5 AND OperatingSystems < 3.5 THEN SCORE_OperatingSystems =0.2857775198;
+IF OperatingSystems >= 3.5 AND OperatingSystems < . THEN SCORE_OperatingSystems =-0.182918655;
+IF OperatingSystems >= 3.5 AND OperatingSystems < . THEN SCORE_OperatingSystems =0.3462090415;
+IF PageValues >= 0 AND PageValues < . THEN SCORE_PageValues =0.1804071276;
+IF PageValues >= 0 AND PageValues < 0.019017271 THEN SCORE_PageValues =-0.772657172;
+IF PageValues >= 0.019017271 AND PageValues < 2.924161864 THEN SCORE_PageValues =0.9003541416;
+IF PageValues >= 18.538267335 AND PageValues < 38.47099594 THEN SCORE_PageValues =1.6191597706;
+IF PageValues >= 2.924161864 AND PageValues < 9.081724709 THEN SCORE_PageValues =0.9899110946;
+IF PageValues >= 38.47099594 AND PageValues < . THEN SCORE_PageValues =2.0327662875;
+IF PageValues >= 9.081724709 AND PageValues < 18.538267335 THEN SCORE_PageValues =1.3138071294;
+IF ProductRelated >= 0 AND ProductRelated < . THEN SCORE_ProductRelated =0.1804071276;
+IF ProductRelated >= 0 AND ProductRelated < . THEN SCORE_ProductRelated =0.3836397492;
+IF ProductRelated >= 0 AND ProductRelated < 1.5 THEN SCORE_ProductRelated =-0.952289436;
+IF ProductRelated >= 0 AND ProductRelated < 1.5 THEN SCORE_ProductRelated =0.1804071276;
+IF ProductRelated >= 1.5 AND ProductRelated < 3.5 THEN SCORE_ProductRelated =-0.534887665;
+IF ProductRelated >= 1.5 AND ProductRelated < 3.5 THEN SCORE_ProductRelated =-0.952289436;
+IF ProductRelated >= 109.5 AND ProductRelated < . THEN SCORE_ProductRelated =0.5726822212;
+IF ProductRelated >= 109.5 AND ProductRelated < . THEN SCORE_ProductRelated =0.7774739504;
+IF ProductRelated >= 11.5 AND ProductRelated < 13.5 THEN SCORE_ProductRelated =-0.025153133;
+IF ProductRelated >= 11.5 AND ProductRelated < 13.5 THEN SCORE_ProductRelated =0.0715638593;
+IF ProductRelated >= 13.5 AND ProductRelated < 15.5 THEN SCORE_ProductRelated =0.0715638593;
+IF ProductRelated >= 13.5 AND ProductRelated < 15.5 THEN SCORE_ProductRelated =0.2287151277;
+IF ProductRelated >= 15.5 AND ProductRelated < 18.5 THEN SCORE_ProductRelated =0.1491503076;
+IF ProductRelated >= 15.5 AND ProductRelated < 18.5 THEN SCORE_ProductRelated =0.2287151277;
+IF ProductRelated >= 18.5 AND ProductRelated < 21.5 THEN SCORE_ProductRelated =0.1491503076;
+IF ProductRelated >= 18.5 AND ProductRelated < 21.5 THEN SCORE_ProductRelated =0.3469803737;
+IF ProductRelated >= 21.5 AND ProductRelated < 24.5 THEN SCORE_ProductRelated =0.3469803737;
+IF ProductRelated >= 21.5 AND ProductRelated < 24.5 THEN SCORE_ProductRelated =0.3715816469;
+IF ProductRelated >= 24.5 AND ProductRelated < 28.5 THEN SCORE_ProductRelated =0.2881601969;
+IF ProductRelated >= 24.5 AND ProductRelated < 28.5 THEN SCORE_ProductRelated =0.3715816469;
+IF ProductRelated >= 28.5 AND ProductRelated < 32.5 THEN SCORE_ProductRelated =0.2881601969;
+IF ProductRelated >= 28.5 AND ProductRelated < 32.5 THEN SCORE_ProductRelated =0.4881768537;
+IF ProductRelated >= 3.5 AND ProductRelated < 4.5 THEN SCORE_ProductRelated =-0.534887665;
+IF ProductRelated >= 3.5 AND ProductRelated < 4.5 THEN SCORE_ProductRelated =-0.536692018;
+IF ProductRelated >= 32.5 AND ProductRelated < 38.5 THEN SCORE_ProductRelated =0.3172075211;
+IF ProductRelated >= 32.5 AND ProductRelated < 38.5 THEN SCORE_ProductRelated =0.4881768537;
+IF ProductRelated >= 38.5 AND ProductRelated < 46.5 THEN SCORE_ProductRelated =0.2986400645;
+IF ProductRelated >= 38.5 AND ProductRelated < 46.5 THEN SCORE_ProductRelated =0.3172075211;
+IF ProductRelated >= 4.5 AND ProductRelated < 6.5 THEN SCORE_ProductRelated =-0.40514102;
+IF ProductRelated >= 4.5 AND ProductRelated < 6.5 THEN SCORE_ProductRelated =-0.536692018;
+IF ProductRelated >= 46.5 AND ProductRelated < 57.5 THEN SCORE_ProductRelated =0.2986400645;
+IF ProductRelated >= 46.5 AND ProductRelated < 57.5 THEN SCORE_ProductRelated =0.3895370545;
+IF ProductRelated >= 57.5 AND ProductRelated < 74.5 THEN SCORE_ProductRelated =0.3895370545;
+IF ProductRelated >= 57.5 AND ProductRelated < 74.5 THEN SCORE_ProductRelated =0.4041731819;
+IF ProductRelated >= 6.5 AND ProductRelated < 7.5 THEN SCORE_ProductRelated =-0.174620666;
+IF ProductRelated >= 6.5 AND ProductRelated < 7.5 THEN SCORE_ProductRelated =-0.40514102;
+IF ProductRelated >= 7.5 AND ProductRelated < 9.5 THEN SCORE_ProductRelated =-0.053522187;
+IF ProductRelated >= 7.5 AND ProductRelated < 9.5 THEN SCORE_ProductRelated =-0.174620666;
+IF ProductRelated >= 74.5 AND ProductRelated < 109.5 THEN SCORE_ProductRelated =0.4041731819;
+IF ProductRelated >= 74.5 AND ProductRelated < 109.5 THEN SCORE_ProductRelated =0.5726822212;
+IF ProductRelated >= 9.5 AND ProductRelated < 11.5 THEN SCORE_ProductRelated =-0.025153133;
+IF ProductRelated >= 9.5 AND ProductRelated < 11.5 THEN SCORE_ProductRelated =-0.053522187;
+IF ProductRelated_Duration >= 0 AND ProductRelated_Duration< . THEN SCORE_ProductRelated_Duration=0.1804071276;
+IF ProductRelated_Duration >= 0 AND ProductRelated_Duration< 0.5 THEN SCORE_ProductRelated_Duration=-1.271025185;
+IF ProductRelated_Duration >= 0.5 AND ProductRelated_Duration< 38.15 THEN SCORE_ProductRelated_Duration=-0.469266262;
+IF ProductRelated_Duration >= 1036.9433965 AND ProductRelated_Duration< 1242.776046 THEN SCORE_ProductRelated_Duration=0.3953672452;
+IF ProductRelated_Duration >= 1242.776046 AND ProductRelated_Duration< 1493.524542 THEN SCORE_ProductRelated_Duration=0.4346159662;
+IF ProductRelated_Duration >= 128.2833333 AND ProductRelated_Duration< 184.125 THEN SCORE_ProductRelated_Duration=-0.384799766;
+IF ProductRelated_Duration >= 1493.524542 AND ProductRelated_Duration< 1802.9583335 THEN SCORE_ProductRelated_Duration=0.2058285117;
+IF ProductRelated_Duration >= 1802.9583335 AND ProductRelated_Duration< 2220.369066 THEN SCORE_ProductRelated_Duration=0.4133576594;
+IF ProductRelated_Duration >= 184.125 AND ProductRelated_Duration< 244.725 THEN SCORE_ProductRelated_Duration=-0.416743389;
+IF ProductRelated_Duration >= 2220.369066 AND ProductRelated_Duration< 2871.1835495 THEN SCORE_ProductRelated_Duration=0.4251616336;
+IF ProductRelated_Duration >= 244.725 AND ProductRelated_Duration< 314.84166665 THEN SCORE_ProductRelated_Duration=-0.043069668;
+IF ProductRelated_Duration >= 2871.1835495 AND ProductRelated_Duration< 4292.1166665 THEN SCORE_ProductRelated_Duration=0.5850121383;
+IF ProductRelated_Duration >= 314.84166665 AND ProductRelated_Duration< 399.25 THEN SCORE_ProductRelated_Duration=0.1057389614;
+IF ProductRelated_Duration >= 38.15 AND ProductRelated_Duration< 76.75 THEN SCORE_ProductRelated_Duration=-0.791194446;
+IF ProductRelated_Duration >= 399.25 AND ProductRelated_Duration< 487.00919575 THEN SCORE_ProductRelated_Duration=-0.073661161;
+IF ProductRelated_Duration >= 4292.1166665 AND ProductRelated_Duration< . THEN SCORE_ProductRelated_Duration=0.8214741898;
+IF ProductRelated_Duration >= 487.00919575 AND ProductRelated_Duration< 599 THEN SCORE_ProductRelated_Duration=0.3241430327;
+IF ProductRelated_Duration >= 599 AND ProductRelated_Duration< 717.53333335 THEN SCORE_ProductRelated_Duration=0.2523704338;
+IF ProductRelated_Duration >= 717.53333335 AND ProductRelated_Duration< 854.30982905 THEN SCORE_ProductRelated_Duration=0.395253807;
+IF ProductRelated_Duration >= 76.75 AND ProductRelated_Duration< 128.2833333 THEN SCORE_ProductRelated_Duration=-0.343471883;
+IF ProductRelated_Duration >= 854.30982905 AND ProductRelated_Duration< 1036.9433965 THEN SCORE_ProductRelated_Duration=0.4418839961;
+IF REVENUE_N >= 0 AND REVENUE_N < . THEN SCORE_REVENUE_N =0.1804071276;
+IF REVENUE_N >= 0 AND REVENUE_N < 0.5 THEN SCORE_REVENUE_N =-4.202949771;
+IF REVENUE_N >= 0.5 AND REVENUE_N < . THEN SCORE_REVENUE_N =5.4884162094;
+IF Region >= 0 AND Region < . THEN SCORE_Region =0.1784021412;
+IF Region >= 0 AND Region < . THEN SCORE_Region =0.1804071276;
+IF Region >= 0 AND Region < 1.5 THEN SCORE_Region =0.1804071276;
+IF Region >= 0 AND Region < 1.5 THEN SCORE_Region =0.2163007133;
+IF Region >= 1.5 AND Region < 2.5 THEN SCORE_Region =0.2007306248;
+IF Region >= 1.5 AND Region < 2.5 THEN SCORE_Region =0.2163007133;
+IF Region >= 2.5 AND Region < 3.5 THEN SCORE_Region =0.0705057095;
+IF Region >= 2.5 AND Region < 3.5 THEN SCORE_Region =0.2007306248;
+IF Region >= 3.5 AND Region < 4.5 THEN SCORE_Region =0.0705057095;
+IF Region >= 3.5 AND Region < 4.5 THEN SCORE_Region =0.1487090008;
+IF Region >= 4.5 AND Region < 6.5 THEN SCORE_Region =0.1487090008;
+IF Region >= 4.5 AND Region < 6.5 THEN SCORE_Region =0.2164631788;
+IF Region >= 6.5 AND Region < 7.5 THEN SCORE_Region =0.2164631788;
+IF Region >= 6.5 AND Region < 7.5 THEN SCORE_Region =0.2322568464;
+IF Region >= 7.5 AND Region < 8.5 THEN SCORE_Region =-0.011735802;
+IF Region >= 7.5 AND Region < 8.5 THEN SCORE_Region =0.2322568464;
+IF Region >= 8.5 AND Region < . THEN SCORE_Region =-0.011735802;
+IF Region >= 8.5 AND Region < . THEN SCORE_Region =0.3589584985;
+IF SpecialDay >= 0 AND SpecialDay < . THEN SCORE_SpecialDay =0.1804071276;
+IF SpecialDay >= 0 AND SpecialDay < . THEN SCORE_SpecialDay =2.0327662875;
+IF SpecialDay >= 0 AND SpecialDay < 0.1 THEN SCORE_SpecialDay =0.1804071276;
+IF SpecialDay >= 0 AND SpecialDay < 0.1 THEN SCORE_SpecialDay =0.2035740106;
+IF SpecialDay >= 0.1 AND SpecialDay < 0.3 THEN SCORE_SpecialDay =-0.096615529;
+IF SpecialDay >= 0.1 AND SpecialDay < 0.3 THEN SCORE_SpecialDay =0.2035740106;
+IF SpecialDay >= 0.3 AND SpecialDay < 0.7 THEN SCORE_SpecialDay =-0.065200198;
+IF SpecialDay >= 0.3 AND SpecialDay < 0.7 THEN SCORE_SpecialDay =-0.096615529;
+IF SpecialDay >= 0.7 AND SpecialDay < . THEN SCORE_SpecialDay =-0.065200198;
+IF SpecialDay >= 0.7 AND SpecialDay < . THEN SCORE_SpecialDay =-0.251045181;
+IF TrafficType >= 0 AND TrafficType < . THEN SCORE_TrafficType =0.1804071276;
+IF TrafficType >= 0 AND TrafficType < . THEN SCORE_TrafficType =0.3589584985;
+IF TrafficType >= 0 AND TrafficType < 1.5 THEN SCORE_TrafficType =-0.034037955;
+IF TrafficType >= 0 AND TrafficType < 1.5 THEN SCORE_TrafficType =0.1804071276;
+IF TrafficType >= 1.5 AND TrafficType < 2.5 THEN SCORE_TrafficType =-0.034037955;
+IF TrafficType >= 1.5 AND TrafficType < 2.5 THEN SCORE_TrafficType =0.3985563633;
+IF TrafficType >= 11.5 AND TrafficType < 13.5 THEN SCORE_TrafficType =-0.415475779;
+IF TrafficType >= 11.5 AND TrafficType < 13.5 THEN SCORE_TrafficType =0.3855906919;
+IF TrafficType >= 13.5 AND TrafficType < . THEN SCORE_TrafficType =-0.415475779;
+IF TrafficType >= 13.5 AND TrafficType < . THEN SCORE_TrafficType =0.362296842;
+IF TrafficType >= 2.5 AND TrafficType < 3.5 THEN SCORE_TrafficType =-0.184636099;
+IF TrafficType >= 2.5 AND TrafficType < 3.5 THEN SCORE_TrafficType =0.3985563633;
+IF TrafficType >= 3.5 AND TrafficType < 4.5 THEN SCORE_TrafficType =-0.184636099;
+IF TrafficType >= 3.5 AND TrafficType < 4.5 THEN SCORE_TrafficType =0.1906328739;
+IF TrafficType >= 4.5 AND TrafficType < 6.5 THEN SCORE_TrafficType =0.1869619595;
+IF TrafficType >= 4.5 AND TrafficType < 6.5 THEN SCORE_TrafficType =0.1906328739;
+IF TrafficType >= 6.5 AND TrafficType < 8.5 THEN SCORE_TrafficType =0.1869619595;
+IF TrafficType >= 6.5 AND TrafficType < 8.5 THEN SCORE_TrafficType =0.5093286604;
+IF TrafficType >= 8.5 AND TrafficType < 11.5 THEN SCORE_TrafficType =0.3855906919;
+IF TrafficType >= 8.5 AND TrafficType < 11.5 THEN SCORE_TrafficType =0.5093286604;
+IF WEEKEND_N >= 0 AND WEEKEND_N < . THEN SCORE_WEEKEND_N =0.1804071276;
+IF WEEKEND_N >= 0 AND WEEKEND_N < 0.5 THEN SCORE_WEEKEND_N =0.1564212331;
+IF WEEKEND_N >= 0.5 AND WEEKEND_N < . THEN SCORE_WEEKEND_N =0.2566901129;
+IF v_TYPE_N >= 0 AND v_TYPE_N < . THEN SCORE_v_TYPE_N =0.1804071276;
+IF v_TYPE_N >= 0 AND v_TYPE_N < 0.5 THEN SCORE_v_TYPE_N =0.5171177081;
+IF v_TYPE_N >= 0.5 AND v_TYPE_N < . THEN SCORE_v_TYPE_N =0.1107868115;
+RUN;
+/*  */
+/* proc Logistic DATA=py.logit_boot outmodel=PY.MODEL_1 descending  */
+/* 		outest=PY.pARAMEST2 namelen=50; */
+/* 	model revenue_n=&Woe./ lackfit rsquare selection=stepwise slentry=0.90  */
+/* 		slstay=0.05; */
+/*  */
+/* 		by SampleID; */
+/* 	output out=PY.logit_BOOT predicted=score2; */
+/* 	ods output ParameterEstimates=PY.OutputStats; */
+/* 	Score  data=py.TEST_scored  out=PY.TEST_SCORED; */
+/* Run; */
+
+PROC Freq DATA=PY.TEST_SCORED;
+	;
+	BY MONTH_FIXED;
+	tables revenue_N*p_1/ measures alpha=0.1 nopercent nocol  
+		OUT=PY.TEST_SC;
+	tables P_1 / measures alpha=0.1 outcum outpct out=PY.TEST_SCp1;
+	Test SMDCR;
+	ods output SomersDCR=SomersD_Mod;
+RUN;
+
+DATA TT;
+SET PY.SCORE_T_WOE;
+if_b=cat('IF ', VARIABLE, ' >= ', LB, ' AND ', VARIABLE, '< ', UB, ' THEN ', 
+			' SCORE_', VARIABLE, '=', SCORE, ';');RUN;
+PROC SORT DATA=TT NODUPKEY OUT=TT(KEEP=IF_B);BY _ALL_;RUN;
+PROC PRINT DATA=TT;RUN;
+proc sql;
+	select distinct if_b into :if_b separated by "; " from TT;
+quit;
+DATA py.SomersD_Mod;
+	set SomersD_Mod;
+	length name $50.;
+
+	/* nway\14 */
+	if Label1="Somers' D C|R" then
+		Label1="GINI";
+	Name="SCORE";
+RUN;
+
+DATA py.SomersD_Mod_test;
+	set py.SomersD_Mod;
+	where Label1="GINI";
+	RENAME nValue1=GINI;
+	keep month_fixed name GINI nValue1;
+RUN;
