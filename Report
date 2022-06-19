@@ -1,1 +1,184 @@
+\documentclass[12pt]{article} \usepackage{graphicx} 
+\usepackage{float} 
+\usepackage{graphicx}
+\usepackage[bulgarian,english]{babel}
+\usepackage{float}
+\usepackage[utf8]{inputenc}\usepackage[T1,T2A]{fontenc} 
 
+\usepackage{hyperref}
+
+
+	\DeclareGraphicsExtensions{.pdf, .png} \begin{document} \title{MGM Report} 
+	\date{18/06/2022} \author{Antonio Kotsev} \maketitle
+
+\section{Data exploration} 
+
+Assumptions about the data:
+
+    No NA values allowed
+    Administrative, Informational, Product related page and their corresponding duration can be zero (e.g. don't visit and spend time on that page) but cannot be a negative value visit
+    Similarly you cannot have negative values for Bounce Rates, Exit rates, Page values, Operating system, Browser, Region
+    You cannot have zero values for Exit rates as at some point user will exit
+    Browser, region, traffic type and operating system represent segment a user based on their usage and zero category was not mentioned in data description
+    Special Day similarly only contains certain values from 0 to 1 in increments of 0.2 (cannot have other values).
+    
+    Bounce rate and Exit rate are heavily correlated by definition
+    
+    
+	Exit rates, Bounce rates, Page Values, Product Related, Traffic type provide distinguishing features and will be used for modeling. I have opted for the non dur  variables as they are easier to bin correctly. There were no missing but most of the data provides no information as it is centered around 0.
+	
+	All variables will be Woe Transformed to lie in a singular State space. U[0:1] with a logistic map serving as a link function.
+    
+   $$ 	f:|Woe(x) ∨(d(X,X))  :x  —> L^1 [0:1]  N->N$$
+    	
+    We split the data in to Train(0.8) and Test(0.2)
+	
+
+\begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/adm_duration.png} \end{figure} 
+	\begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/administrative.png} 	\end{figure} \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/bounce_r.png} \end{figure} 
+	\begin{figure} \includegraphics[width=\linewidth]{oi/report/adm_duration.png} 	\end{figure} \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/browser.png} \end{figure} 
+	\begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/distr_of_months.png}
+	The Distribution is heavily unbalanced,whic leads to an overrepresentation of certain months. To fix this I will add Polyharmonic splines to the Final Model. 
+	We have encoded the months in a numerical format for ease of use.
+	
+	\end{figure} 
+	
+
+	\begin{figure} \includegraphics[width=\linewidth]{oi/report/Customer_type.png} 
+	\end{figure} \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/exit_r.png} \end{figure} 
+	\begin{figure} \includegraphics[width=\linewidth]{oi/report/region.png} 
+	\end{figure} \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/revenue_n.png} \end{figure} 
+	\begin{figure} \includegraphics[width=\linewidth]{oi/report/exit_r.png} 
+	\end{figure} E \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/inf_dur.png} \end{figure} 
+	\begin{figure} \includegraphics[width=\linewidth]{oi/report/inf.png} 
+	\end{figure} \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/operating_s.png} 	\end{figure} \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/page_v.png} \end{figure} 
+	\begin{figure} \includegraphics[width=\linewidth]{oi/report/pr_dur.png} 
+	\end{figure} \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/prod_rel.png} \end{figure} 
+	\begin{figure} \includegraphics[width=\linewidth]{oi/report/revenue_n.png} 	\end{figure} \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/trafic_type.png} \end{figure} 
+	
+	
+	Modeling : Logistic Regression->loess cubic fit, Random Forest, Wolfram Classifiers
+	
+	Target Variable is $ Revenue_N=1.$ . 
+	$$
+	Def: Woe-> LOG(dist_good/dist_bad)
+	IV- ∑(Good-Bad)* Woe$$
+	Rules for removal based on IV:
+            	
+            	 Less than 0.02 	Not useful for prediction 
+                 0.02 to 0.1 	Weak predictive Power 
+                 0.1 to 0.3 	Medium predictive Power 
+                 0.3 to 0.5 	Strong predictive Power
+                 >0.5 	Suspicious Predictive Power 
+            	which generates a linear space
+      $$  y=(b+b2x+b3x...)*woe $$
+$$	sigmoid=1/1+exp(y)
+	$$ 
+	
+	Page Value has a suspiciously high IV but is a Google generated metric.
+	
+            
+            	WOE_Administrative	
+            	
+            /* 	WOE_Administrative_Duration	 */
+            
+            	WOE_BounceRates	
+            	
+            	WOE_Browser	
+            	
+            	WOE_ExitRates	
+            	
+            	WOE_Informational	
+            	
+            /* 	WOE_Informational_Duration	 */
+            
+            	WOE_Month_FIXED	
+            	
+            	WOE_OperatingSystems	
+            	
+            	WOE_PageValues	
+            	
+            	WOE_ProductRelated	
+            	
+            /* 	WOE_ProductRelated_Duration	 */
+            
+            	WOE_Region	
+            	
+            	WOE_SpecialDay	
+            	
+            	WOE_TrafficType	
+            	
+            	WOE_WEEKEND_N	
+            	
+            	WOE_v_TYPE_N
+
+Variables that are over 0.6 correlated are removed as to not overfit.
+
+The non-duration variables are less coarse and provide more information.
+
+We then Bootstrap with replacement the Train set by 500 Distributions. This is the equivalent of a variational approach which minimizes our errors and ensure only important features are selected.
+Parameters of the logistic procedure:
+        selection=stepwise slentry=0.90 
+		slstay=0.05
+
+This produces the desired results and as can be seem by our ProbChq metric, errors are indeed minimized.
+βi — logistic regression coefficient for the variable Xi α — logistic  
+		regression intercept WoE — Weight of Evidence value for variable Xi 
+
+
+CALCULATE SOMERSD Distance to measure performance:
+
+        
+        1   0.889783	SOMERSD	
+        
+        2	0.971209	SOMERSD	
+        
+        3	0.927909	SOMERSD	
+        
+        4	0.620128	SOMERSD	
+        
+        5	0.589511	SOMERSD	
+        
+        6	0.614810	SOMERSD	
+        
+        7	0.179218	SOMERSD	-> THIS CAN BE EXPLAINED BY THE HOLIDAY 							VARIABLE   SPECIAL DAY
+        8	0.526125	SOMERSD
+                                -> THIS IS DUE TO THE IMBALANCE OF THE DATA SET
+        9	0.606384	SOMERSD	
+        
+        10	0.700636	SOMERSD	
+        
+        We score Test with a simple scorecard.
+        
+        $Score=(YX + INTERCEPT/14)$
+        
+        To fix the imbalance we need to change the Model from a purely spatial one"	F(x) to one that is F(x,x*x). We do this by introducing polyharmonic splines.
+        
+            \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/loess model.png}` \end{figure} 
+        X is split in to k-d trees and traversed.
+        
+        The automatic procedure did not seem to handle the data well and improvement on predictability was not observed.
+                \begin{figure} 
+	\includegraphics[width=\linewidth]{oi/report/poly_spl_reg.png}` \end{figure} 
+        
+        
+        Random Forest model parameters:
+         maxtrees=100 vars_to_try=20 seed=1138 
+		 maxdepth=50 leafsize=12 alpha=0.1;
+		 
+		 Performance : 0.62 Sommersd 
+        
+	\end{document}
